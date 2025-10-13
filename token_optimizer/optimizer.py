@@ -1,0 +1,282 @@
+"""
+Main TokenOptimizer class - orchestrates the optimization pipeline.
+"""
+
+import time
+from typing import Optional, Dict, Any
+
+from .config import Config
+from .llm import LLMService
+from .translation import TranslationService
+from .cache import CacheManager
+from .tokens import TokenCounter
+from .models import OptimizationResponse, OptimizationMetrics
+
+
+class TokenOptimizer:
+    """
+    Optimizer for Japanese queries using English-optimized LLMs.
+    Translates Japanese→English for processing, then back to Japanese.
+    """
+    
+    def __init__(
+        self,
+        llm_provider: str = "ollama",
+        llm_model: Optional[str] = None,
+        translation_provider: str = "google",
+        cache_enabled: bool = False,
+        temperature: float = 0.7,
+        optimization_threshold: int = 100
+    ):
+        """
+        Initialize TokenOptimizer.
+        
+        Args:
+            llm_provider: LLM provider (only "ollama" supported)
+            llm_model: Specific model to use (defaults to qwen2.5:1.5b)
+            translation_provider: Translation provider (only "google" supported)
+            cache_enabled: Whether to enable caching (disabled by default)
+            temperature: LLM sampling temperature
+            optimization_threshold: Minimum tokens to consider optimization
+        """
+        # Load configurations
+        config = Config()
+        llm_config = config.get_llm_config(llm_provider, llm_model)
+        translation_config = config.get_translation_config(translation_provider)
+        cache_config = config.get_cache_config()
+        
+        # Initialize cache manager
+        self.cache_manager = None
+        if cache_enabled and cache_config.enabled:
+            redis_config = {
+                "host": cache_config.host,
+                "port": cache_config.port,
+                "db": cache_config.db,
+                "password": cache_config.password
+            }
+            self.cache_manager = CacheManager(redis_config, cache_config.ttl)
+        
+        # Initialize services
+        self.llm_service = LLMService(
+            llm_config.provider,
+            llm_config.model,
+            llm_config.api_key,
+            temperature,
+            self.cache_manager
+        )
+        
+        self.translation_service = TranslationService(
+            translation_config.provider,
+            translation_config.api_key,
+            self.cache_manager
+        )
+        
+        self.token_counter = TokenCounter(llm_config.model)
+        self.optimization_threshold = optimization_threshold
+    
+    def optimize_request(
+        self,
+        prompt: str,
+        max_tokens: int = 1000,
+        system_prompt: Optional[str] = None,
+        force_optimization: Optional[bool] = None
+    ) -> OptimizationResponse:
+        """
+        Process a Japanese query with optional translation optimization.
+        
+        Args:
+            prompt: Japanese prompt text
+            max_tokens: Maximum tokens for response
+            system_prompt: Optional Japanese system prompt
+            force_optimization: Force enable/disable optimization (None=auto)
+            
+        Returns:
+            OptimizationResponse with Japanese content and metrics
+        """
+        start_time = time.time()
+        
+        # Count original Japanese tokens
+        original_input_tokens = self.token_counter.count_tokens(prompt)
+        if system_prompt:
+            original_input_tokens += self.token_counter.count_tokens(system_prompt)
+        
+        # Decide whether to optimize
+        should_optimize = force_optimization
+        if should_optimize is None:
+            # Auto-decide based on threshold and token analysis
+            should_optimize = (
+                original_input_tokens >= self.optimization_threshold
+            )
+        
+        if should_optimize:
+            return self._optimized_request(
+                prompt, max_tokens, system_prompt,
+                original_input_tokens, start_time
+            )
+        else:
+            return self._direct_request(
+                prompt, max_tokens, system_prompt,
+                original_input_tokens, start_time
+            )
+    
+    def _direct_request(
+        self,
+        prompt: str,
+        max_tokens: int,
+        system_prompt: Optional[str],
+        original_input_tokens: int,
+        start_time: float
+    ) -> OptimizationResponse:
+        """Execute direct LLM request in Japanese without translation."""
+        
+        # Generate response directly in Japanese
+        response = self.llm_service.generate(prompt, max_tokens, system_prompt)
+        
+        total_time = time.time() - start_time
+        
+        # Calculate costs
+        input_tokens = response["input_tokens"]
+        output_tokens = response["output_tokens"]
+        
+        cost = self.token_counter.estimate_cost(input_tokens, output_tokens)
+        
+        # Create metrics (no optimization used)
+        metrics = OptimizationMetrics(
+            original_tokens=input_tokens + output_tokens,
+            optimized_tokens=input_tokens + output_tokens,
+            tokens_saved=0,
+            original_cost=cost,
+            optimized_cost=cost,
+            cost_saved=0.0,
+            translation_time=0.0,
+            llm_time=response["generation_time"],
+            total_time=total_time,
+            used_optimization=False
+        )
+        
+        return OptimizationResponse(
+            content=response["content"],
+            metrics=metrics,
+            raw_response=response.get("raw_response")
+        )
+    
+    def _optimized_request(
+        self,
+        prompt: str,
+        max_tokens: int,
+        system_prompt: Optional[str],
+        original_input_tokens: int,
+        start_time: float
+    ) -> OptimizationResponse:
+        """
+        Execute optimized LLM request by translating Japanese→English→Japanese.
+        This reduces token usage for English-optimized models.
+        """
+        
+        translation_start = time.time()
+        
+        # Translate Japanese prompt to English for LLM
+        prompt_en = self.translation_service.translate(
+            prompt, source_lang="ja", target_lang="en"
+        )
+        
+        # Translate system prompt if provided
+        system_prompt_en = None
+        if system_prompt:
+            system_result = self.translation_service.translate(
+                system_prompt, source_lang="ja", target_lang="en"
+            )
+            system_prompt_en = system_result.text
+        
+        translation_to_en_time = time.time() - translation_start
+        
+        # Count English tokens (optimized - should be lower)
+        en_input_tokens = self.token_counter.count_tokens(prompt_en.text)
+        if system_prompt_en:
+            en_input_tokens += self.token_counter.count_tokens(system_prompt_en)
+        
+        # Generate response in English
+        response = self.llm_service.generate(
+            prompt_en.text, max_tokens, system_prompt_en
+        )
+        
+        # Translate English response back to Japanese
+        translation_back_start = time.time()
+        response_ja = self.translation_service.translate(
+            response["content"], source_lang="en", target_lang="ja"
+        )
+        translation_from_en_time = time.time() - translation_back_start
+        
+        total_translation_time = translation_to_en_time + translation_from_en_time
+        total_time = time.time() - start_time
+        
+        # Calculate costs
+        optimized_input_tokens = response["input_tokens"]
+        output_tokens = response["output_tokens"]
+        
+        original_cost = self.token_counter.estimate_cost(
+            original_input_tokens, output_tokens
+        )
+        optimized_cost = self.token_counter.estimate_cost(
+            optimized_input_tokens, output_tokens
+        )
+        
+        # Create metrics
+        metrics = OptimizationMetrics(
+            original_tokens=original_input_tokens + output_tokens,
+            optimized_tokens=optimized_input_tokens + output_tokens,
+            tokens_saved=original_input_tokens - optimized_input_tokens,
+            original_cost=original_cost,
+            optimized_cost=optimized_cost,
+            cost_saved=original_cost - optimized_cost,
+            translation_time=total_translation_time,
+            llm_time=response["generation_time"],
+            total_time=total_time,
+            used_optimization=True
+        )
+        
+        return OptimizationResponse(
+            content=response_ja.text,
+            metrics=metrics,
+            raw_response=response.get("raw_response")
+        )
+    
+    def analyze_potential_savings(self, prompt: str, output_tokens: int = 500) -> Dict[str, Any]:
+        """
+        Analyze potential token and cost savings for a Japanese prompt.
+        
+        Args:
+            prompt: Japanese prompt text
+            output_tokens: Estimated output tokens
+            
+        Returns:
+            Dictionary with savings analysis
+        """
+        # Count original Japanese tokens
+        ja_tokens = self.token_counter.count_tokens(prompt)
+        
+        # Translate to get English token count
+        prompt_en = self.translation_service.translate(
+            prompt, source_lang="ja", target_lang="en"
+        )
+        en_tokens = self.token_counter.count_tokens(prompt_en.text)
+        
+        # Calculate savings
+        input_tokens_saved = ja_tokens - en_tokens
+        total_tokens_saved = input_tokens_saved  # Output tokens same in both
+        
+        ja_cost = self.token_counter.estimate_cost(ja_tokens, output_tokens)
+        en_cost = self.token_counter.estimate_cost(en_tokens, output_tokens)
+        cost_saved = ja_cost - en_cost
+        
+        return {
+            "japanese_input_tokens": ja_tokens,
+            "english_input_tokens": en_tokens,
+            "input_tokens_saved": input_tokens_saved,
+            "token_reduction_percent": (input_tokens_saved / ja_tokens * 100) if ja_tokens > 0 else 0,
+            "japanese_cost": ja_cost,
+            "english_cost": en_cost,
+            "cost_saved": cost_saved,
+            "cost_reduction_percent": (cost_saved / ja_cost * 100) if ja_cost > 0 else 0,
+            "recommendation": "optimize" if input_tokens_saved > 50 else "direct"
+        }
