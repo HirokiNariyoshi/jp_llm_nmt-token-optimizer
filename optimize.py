@@ -11,8 +11,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from token_optimizer import TokenOptimizer
 
-# Toggle between test mode and interactive mode
+# Configuration
 TEST_MODE = False  # Set to True to use hardcoded example
+COMPARE_MODE = False  # Set to True to query both paths for accurate comparison (2x slower)
 
 # Test prompt (long conversational example)
 TEST_PROMPT = """
@@ -107,12 +108,17 @@ def main():
         print()
     
     # Process request
-    print("🚀 Processing with optimization...")
+    if COMPARE_MODE:
+        print("🚀 Processing with compare mode (querying both paths)...")
+        print("   This queries the model twice for accurate measurement")
+    else:
+        print("🚀 Processing with optimization...")
     print()
     
     response = optimizer.optimize_request(
         prompt=japanese_prompt,
-        max_tokens=800 if TEST_MODE else 500
+        max_tokens=800 if TEST_MODE else 500,
+        compare_mode=COMPARE_MODE
     )
     
     # Display results
@@ -160,6 +166,11 @@ def main():
     print()
     
     # Status summary
+    if COMPARE_MODE:
+        print("ℹ️  Compare mode: Token counts are from actual model responses")
+        print("   (not tiktoken estimates)")
+        print()
+    
     if metrics.used_optimization:
         if metrics.tokens_saved > 0:
             print("✅ Optimization successful! English translation reduced token usage.")
