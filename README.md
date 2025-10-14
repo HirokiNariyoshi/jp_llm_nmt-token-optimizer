@@ -1,4 +1,4 @@
-# TokenOptimizer - Japanese Query Optimizer
+# Japanese Query Optimizer
 
 A Python library that reduces LLM API costs for Japanese users by translating queries to English for processing.
 
