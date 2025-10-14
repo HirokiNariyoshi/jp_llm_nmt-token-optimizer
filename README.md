@@ -4,7 +4,9 @@ A Python library that reduces LLM API costs for Japanese users by translating qu
 
 ## Concept
 
-Modern LLM tokenizers (GPT-4, Claude, etc.) are heavily optimized for English, making Japanese text ~2-3x more expensive in token usage. This library translates Japanese prompts to English, processes them with English-optimized LLMs, then translates responses back to Japanese - saving ~58% on token costs.
+Modern LLM tokenizers are heavily optimized for English, making Japanese text ~3-5x more token-intensive. This library translates Japanese prompts to English, processes them with English-optimized models, then translates responses back to Japanese - saving more than 20% on tokens, with longer queries yielding more savings.
+
+Perfect for local Ollama models - completely free!
 
 ## Quick Start
 
@@ -21,9 +23,7 @@ python optimize.py
 from token_optimizer import TokenOptimizer
 
 optimizer = TokenOptimizer(
-    llm_provider="ollama",
-    llm_model="qwen2.5:1.5b",
-    translation_provider="google"
+    llm_model="qwen2.5:1.5b"  # Or any Ollama model
 )
 
 # Japanese input
@@ -35,7 +35,6 @@ response = optimizer.optimize_request(
 # Japanese output
 print(response.content)
 print(f"Tokens saved: {response.metrics.tokens_saved}")
-print(f"Cost saved: ${response.metrics.cost_saved:.4f}")
 ```
 
 ### Compare Mode (Accurate Measurement)
@@ -63,7 +62,7 @@ cd llm_nmt-token-optimizer
 python -m venv venv
 .\venv\Scripts\Activate.ps1  # Windows PowerShell
 # or
-source venv/bin/activate      # Linux/Mac
+source venv/bin/activate     # Linux/Mac
 ```
 
 ### 3. Install dependencies
@@ -82,21 +81,13 @@ ollama pull qwen2.5:1.5b
 
 ## Configuration
 
-### For Local Development (Ollama)
+No configuration needed! Just:
 
-No configuration needed! Just install Ollama and pull a model.
+1. Install Ollama
+2. Pull a model (`ollama pull qwen2.5:1.5b`)
+3. Run `python optimize.py`
 
-### For Production APIs (Optional)
-
-If you want to use cloud LLM providers in the future, create a `.env` file:
-
-```env
-# LLM API Keys (if using cloud providers)
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_anthropic_key
-```
-
-**Note:** Currently only Ollama (local) and Google Translate (free) are fully supported.
+Everything runs locally and is completely free.
 
 ## Architecture
 
@@ -142,17 +133,8 @@ ANTHROPIC_API_KEY=your_anthropic_key
 - ✅ **Automatic optimization** - Smart decisions based on token analysis
 - ✅ **Detailed metrics** - Token counts, cost savings, performance stats
 
-## Performance
 
-Real-world test results with `qwen2.5:1.5b`:
-
-| Prompt Type         | Japanese Tokens | English Tokens | Savings | % Reduction |
-| ------------------- | --------------- | -------------- | ------- | ----------- |
-| Short technical     | 85              | 28             | 57      | 67.1%       |
-| Long conversational | 616             | 287            | 329     | 53.4%       |
-| Business query      | 204             | 87             | 117     | 57.4%       |
-
-**Average savings: ~58% on input tokens**
+**Average savings: ~23% on input tokens**
 
 Best use cases:
 
@@ -213,11 +195,8 @@ For 100% accurate token counts:
 ```python
 from token_optimizer import TokenOptimizer
 
-optimizer = TokenOptimizer(
-    llm_provider="ollama",
-    llm_model="qwen2.5:1.5b",
-    translation_provider="google"
-)
+# Initialize with your preferred Ollama model
+optimizer = TokenOptimizer(llm_model="qwen2.5:1.5b")
 
 # Original Japanese prompt
 japanese_prompt = """
@@ -239,7 +218,6 @@ print(f"  Original tokens: {response.metrics.original_tokens}")
 print(f"  Optimized tokens: {response.metrics.optimized_tokens}")
 print(f"  Tokens saved: {response.metrics.tokens_saved}")
 print(f"  Percentage saved: {response.metrics.percent_saved:.1f}%")
-print(f"  Cost saved: ${response.metrics.cost_saved:.4f}")
 ```
 
 ## Project Structure

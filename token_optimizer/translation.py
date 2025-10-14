@@ -1,28 +1,15 @@
 """
-Translation service abstraction layer.
+Google Translate integration - free translation service.
 """
 
 import time
 from typing import Optional
-from abc import ABC, abstractmethod
 
 from .models import TranslationResult
 
 
-class TranslationProvider(ABC):
-    """Abstract base class for translation providers."""
-    
-    def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key
-    
-    @abstractmethod
-    def translate(self, text: str, source_lang: str, target_lang: str) -> TranslationResult:
-        """Translate text from source to target language."""
-        pass
-
-
-class GoogleTranslator(TranslationProvider):
-    """Google Translate provider using deep-translator."""
+class GoogleTranslator:
+    """Google Translate using deep-translator - free and simple."""
     
     def translate(self, text: str, source_lang: str, target_lang: str) -> TranslationResult:
         """Translate using Google Translate."""
@@ -51,21 +38,12 @@ class GoogleTranslator(TranslationProvider):
 
 
 class TranslationService:
-    """Manages translation operations with multiple providers."""
+    """Manages Google Translate operations."""
     
-    def __init__(self, provider: str = "google", api_key: Optional[str] = None):
-        """
-        Initialize translation service.
-        
-        Args:
-            provider: Translation provider name (only "google" supported)
-            api_key: Not used for Google Translate
-        """
-        if provider.lower() != "google":
-            raise ValueError(f"Only 'google' provider is supported")
-        
+    def __init__(self):
+        """Initialize Google Translate service."""
         self.provider_name = "google"
-        self.provider = GoogleTranslator(api_key)
+        self.provider = GoogleTranslator()
     
     def translate(self, text: str, source_lang: str = "en", 
                   target_lang: str = "ja") -> TranslationResult:

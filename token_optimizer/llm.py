@@ -1,41 +1,29 @@
 """
-LLM provider integrations.
+Ollama LLM integration - local and free.
 """
 
 import time
 from typing import Optional, Dict, Any
-from abc import ABC, abstractmethod
 
 from .models import OptimizationMetrics
 from .tokens import TokenCounter
 
 
-class LLMProvider(ABC):
-    """Abstract base class for LLM providers."""
+class OllamaProvider:
+    """Ollama local model provider - completely free."""
     
-    def __init__(self, api_key: str, model: str, temperature: float = 0.7):
-        self.api_key = api_key
+    def __init__(self, model: str, temperature: float = 0.7):
         self.model = model
         self.temperature = temperature
         self.token_counter = TokenCounter(model)
-    
-    @abstractmethod
-    def generate(self, prompt: str, max_tokens: int = 1000, 
-                 system_prompt: Optional[str] = None) -> Dict[str, Any]:
-        """Generate completion from prompt."""
-        pass
     
     def count_tokens(self, text: str) -> int:
         """Count tokens in text."""
         return self.token_counter.count_tokens(text)
     
     def estimate_cost(self, input_tokens: int, output_tokens: int) -> float:
-        """Estimate cost for token counts."""
-        return self.token_counter.estimate_cost(input_tokens, output_tokens)
-
-
-class OllamaProvider(LLMProvider):
-    """Ollama local model provider - completely free."""
+        """Estimate cost for token counts (always $0 for Ollama)."""
+        return 0.0
     
     def generate(self, prompt: str, max_tokens: int = 1000, 
                  system_prompt: Optional[str] = None) -> Dict[str, Any]:
@@ -100,23 +88,18 @@ class OllamaProvider(LLMProvider):
 
 
 class LLMService:
-    """Manages LLM operations with multiple providers."""
+    """Manages Ollama LLM operations."""
     
-    def __init__(self, provider: str, api_key: str, model: str, temperature: float = 0.7):
+    def __init__(self, model: str, temperature: float = 0.7):
         """
-        Initialize LLM service.
+        Initialize Ollama LLM service.
         
         Args:
-            provider: LLM provider name (only "ollama" supported)
-            api_key: Not used for Ollama (runs locally)
-            model: Model name to use
+            model: Ollama model name to use (e.g., "qwen2.5:1.5b")
             temperature: Sampling temperature
         """
-        if provider.lower() != "ollama":
-            raise ValueError(f"Only 'ollama' provider is supported")
-        
         self.provider_name = "ollama"
-        self.provider = OllamaProvider(api_key, model, temperature)
+        self.provider = OllamaProvider(model, temperature)
     
     def generate(self, prompt: str, max_tokens: int = 1000, 
                  system_prompt: Optional[str] = None) -> Dict[str, Any]:

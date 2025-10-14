@@ -1,5 +1,5 @@
 """
-Token counting utilities for different LLM providers.
+Token counting utilities for Ollama models.
 """
 
 import tiktoken
@@ -7,19 +7,7 @@ from typing import Optional
 
 
 class TokenCounter:
-    """Count tokens for different LLM models."""
-    
-    # Cost per 1K tokens (input/output) - as of 2024
-    COSTS = {
-        "gpt-4o": (0.0025, 0.01),
-        "gpt-4o-mini": (0.00015, 0.0006),
-        "gpt-4-turbo": (0.01, 0.03),
-        "gpt-3.5-turbo": (0.0005, 0.0015),
-        "claude-3-5-sonnet-20241022": (0.003, 0.015),
-        "claude-3-opus-20240229": (0.015, 0.075),
-        "claude-3-sonnet-20240229": (0.003, 0.015),
-        "claude-3-haiku-20240307": (0.00025, 0.00125),
-    }
+    """Count tokens for Ollama models (free, local inference)."""
     
     def __init__(self, model: str):
         self.model = model
@@ -45,26 +33,20 @@ class TokenCounter:
         """
         Estimate the cost for a request.
         
+        For Ollama (local models), cost is always $0.00.
+        This method exists for API compatibility.
+        
         Args:
             input_tokens: Number of input tokens
             output_tokens: Number of output tokens
             
         Returns:
-            Estimated cost in USD
+            0.0 (Ollama is free!)
         """
-        # Get costs for model, default to GPT-4 pricing
-        input_cost_per_1k, output_cost_per_1k = self.COSTS.get(
-            self.model, 
-            self.COSTS.get("gpt-4o", (0.0025, 0.01))
-        )
-        
-        input_cost = (input_tokens / 1000) * input_cost_per_1k
-        output_cost = (output_tokens / 1000) * output_cost_per_1k
-        
-        return input_cost + output_cost
+        return 0.0
     
     @staticmethod
-    def compare_languages(japanese_text: str, english_text: str, model: str = "gpt-4o") -> dict:
+    def compare_languages(japanese_text: str, english_text: str, model: str = "qwen2.5:1.5b") -> dict:
         """
         Compare token counts between Japanese and English versions.
         Japanese typically uses more tokens in English-optimized models.

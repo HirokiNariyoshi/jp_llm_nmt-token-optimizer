@@ -20,9 +20,7 @@ class TokenOptimizer:
     
     def __init__(
         self,
-        llm_provider: str = "ollama",
         llm_model: Optional[str] = None,
-        translation_provider: str = "google",
         temperature: float = 0.7,
         optimization_threshold: int = 100
     ):
@@ -30,29 +28,22 @@ class TokenOptimizer:
         Initialize TokenOptimizer.
         
         Args:
-            llm_provider: LLM provider (only "ollama" supported)
-            llm_model: Specific model to use (defaults to qwen2.5:1.5b)
-            translation_provider: Translation provider (only "google" supported)
+            llm_model: Ollama model to use (defaults to qwen2.5:1.5b)
             temperature: LLM sampling temperature
             optimization_threshold: Minimum tokens to consider optimization
         """
         # Load configurations
         config = Config()
-        llm_config = config.get_llm_config(llm_provider, llm_model)
-        translation_config = config.get_translation_config(translation_provider)
+        llm_config = config.get_llm_config(llm_model)
+        translation_config = config.get_translation_config()
         
         # Initialize services
         self.llm_service = LLMService(
-            llm_config.provider,
-            llm_config.api_key,
             llm_config.model,
             temperature
         )
         
-        self.translation_service = TranslationService(
-            translation_config.provider,
-            translation_config.api_key
-        )
+        self.translation_service = TranslationService()
         
         self.token_counter = TokenCounter(llm_config.model)
         self.optimization_threshold = optimization_threshold

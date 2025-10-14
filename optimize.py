@@ -53,9 +53,7 @@ def main():
     
     # Initialize optimizer
     optimizer = TokenOptimizer(
-        llm_provider="ollama",
         llm_model="qwen2.5:1.5b",
-        translation_provider="google",
         optimization_threshold=10
     )
     

@@ -46,8 +46,6 @@ python optimize.py
 # Set COMPARE_MODE = True to query both paths for accurate measurement
 ```
 
-## Available Models
-
 ### Recommended Models:
 
 - **qwen2.5:1.5b** (default) - Lightweight, good Japanese support (~986MB)
@@ -55,10 +53,6 @@ python optimize.py
 - **gemma2:2b** - Google's lightweight model (~1.6GB)
 - **gemma2:9b** - Larger version (~5.4GB)
 
-### Alternative Models:
-
-- **mistral:7b** - Good general model (~4.1GB)
-- **llama3.2:3b** - Meta's model (~2GB)
 
 ### Download a model:
 
@@ -76,14 +70,13 @@ ollama list
 
 ```python
 optimizer = TokenOptimizer(
-    llm_provider="ollama",
     llm_model="qwen2.5:7b"  # Larger model for better quality
 )
 ```
 
 ## Why Ollama?
 
-✅ **Completely FREE** - No API costs
+✅ **Completely FREE** - No API costs (im broke)
 ✅ **Privacy** - Everything runs locally on your machine
 ✅ **No limits** - Use as much as you want
 ✅ **Fast** - Good performance with lightweight models
@@ -132,4 +125,4 @@ python optimize.py
 python optimize.py
 ```
 
-Expected results: **53-58% token savings** when translating Japanese to English for processing!
+Expected results: **20% or more token savings** when translating Japanese to English for processing!
