@@ -59,10 +59,9 @@ class TokenOptimizer:
         # Initialize services
         self.llm_service = LLMService(
             llm_config.provider,
-            llm_config.model,
             llm_config.api_key,
-            temperature,
-            self.cache_manager
+            llm_config.model,
+            temperature
         )
         
         self.translation_service = TranslationService(
