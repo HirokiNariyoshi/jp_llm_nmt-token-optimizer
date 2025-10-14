@@ -54,8 +54,5 @@ logs/
 .cache/
 *.cache
 
-# Redis dumps
-dump.rdb
-
 # History
 .history/

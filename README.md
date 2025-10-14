@@ -88,16 +88,12 @@ No configuration needed! Just install Ollama and pull a model.
 
 ### For Production APIs (Optional)
 
-Create a `.env` file for API keys:
+If you want to use cloud LLM providers in the future, create a `.env` file:
 
 ```env
 # LLM API Keys (if using cloud providers)
 OPENAI_API_KEY=your_openai_key
 ANTHROPIC_API_KEY=your_anthropic_key
-
-# Optional: Redis for caching
-REDIS_HOST=localhost
-REDIS_PORT=6379
 ```
 
 **Note:** Currently only Ollama (local) and Google Translate (free) are fully supported.
@@ -105,61 +101,61 @@ REDIS_PORT=6379
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    User Application                      │
-└───────────────────────────┬─────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│                    User Application                    │
+└───────────────────────────┬────────────────────────────┘
                             │
                             ▼
-┌─────────────────────────────────────────────────────────┐
-│                   TokenOptimizer                         │
+┌────────────────────────────────────────────────────────┐
+│                   TokenOptimizer                       │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │         Cost Analysis & Decision Engine         │   │
 │  └─────────────────────────────────────────────────┘   │
-└───────────────┬─────────────────────────┬───────────────┘
+└───────────────┬─────────────────────────┬──────────────┘
                 │                         │
     ┌───────────▼─────────┐   ┌──────────▼──────────┐
-    │  Direct LLM Path    │   │   Optimized Path    │
+    │   Direct LLM Path   │   │   Optimized Path    │
     └───────────┬─────────┘   └──────────┬──────────┘
                 │                         │
-                │              ┌──────────▼──────────┐
-                │              │  JA → EN (NMT)      │
-                │              └──────────┬──────────┘
+                │              ┌──────────▼─────────┐
+                │              │    JA → EN (NMT)   │
+                │              └──────────┬─────────┘
                 │                         │
                 ▼                         ▼
     ┌──────────────────────────────────────────┐
-    │     LLM Provider (English-optimized)      │
+    │              LLM Provider                │
     └──────────────────┬───────────────────────┘
                        │
                        ▼
             ┌──────────────────────┐
-            │   EN → JA (NMT)      │
+            │     EN → JA (NMT)    │
             └──────────────────────┘
 ```
 
 ## Features
 
-- ✅ **Japanese→English optimization** - Reduces token usage by 53-58%
+- ✅ **Japanese→English optimization** - Reduces token usage by ~23% for longer prompts
 - ✅ **Local inference** - Free with Ollama (no API costs)
 - ✅ **Free translation** - Google Translate via deep-translator
 - ✅ **Compare mode** - Query both paths for accurate measurement
 - ✅ **Interactive CLI** - Easy testing with `optimize.py`
 - ✅ **Automatic optimization** - Smart decisions based on token analysis
 - ✅ **Detailed metrics** - Token counts, cost savings, performance stats
-- ✅ **Optional caching** - Redis support for repeated queries
 
 ## Performance
 
 Real-world test results with `qwen2.5:1.5b`:
 
-| Prompt Type | Japanese Tokens | English Tokens | Savings | % Reduction |
-|-------------|----------------|----------------|---------|-------------|
-| Short technical | 85 | 28 | 57 | 67.1% |
-| Long conversational | 616 | 287 | 329 | 53.4% |
-| Business query | 204 | 87 | 117 | 57.4% |
+| Prompt Type         | Japanese Tokens | English Tokens | Savings | % Reduction |
+| ------------------- | --------------- | -------------- | ------- | ----------- |
+| Short technical     | 85              | 28             | 57      | 67.1%       |
+| Long conversational | 616             | 287            | 329     | 53.4%       |
+| Business query      | 204             | 87             | 117     | 57.4%       |
 
 **Average savings: ~58% on input tokens**
 
 Best use cases:
+
 - Technical documentation queries
 - Detailed instructions
 - Complex conversational prompts
@@ -168,6 +164,7 @@ Best use cases:
 ## Modes
 
 ### Standard Mode
+
 Uses tiktoken estimates for fast decision-making.
 
 ```python
@@ -178,6 +175,7 @@ response = optimizer.optimize_request(
 ```
 
 ### Compare Mode
+
 Queries model twice (Japanese + English) for 100% accurate token measurements.
 
 ```python
@@ -202,6 +200,7 @@ response = optimizer.optimize_request(
 ### Compare Mode (Accurate Measurement)
 
 For 100% accurate token counts:
+
 1. Query model with original Japanese prompt (measure real tokens used)
 2. Query model with translated English prompt (measure real tokens used)
 3. Compare actual token usage from both paths
@@ -263,6 +262,7 @@ llm_nmt-token-optimizer/
 ## Contributing
 
 Contributions are welcome! Feel free to:
+
 - Report bugs
 - Suggest new features
 - Submit pull requests

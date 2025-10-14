@@ -8,7 +8,6 @@ from typing import Optional, Dict, Any
 from .config import Config
 from .llm import LLMService
 from .translation import TranslationService
-from .cache import CacheManager
 from .tokens import TokenCounter
 from .models import OptimizationResponse, OptimizationMetrics
 
@@ -24,7 +23,6 @@ class TokenOptimizer:
         llm_provider: str = "ollama",
         llm_model: Optional[str] = None,
         translation_provider: str = "google",
-        cache_enabled: bool = False,
         temperature: float = 0.7,
         optimization_threshold: int = 100
     ):
@@ -35,7 +33,6 @@ class TokenOptimizer:
             llm_provider: LLM provider (only "ollama" supported)
             llm_model: Specific model to use (defaults to qwen2.5:1.5b)
             translation_provider: Translation provider (only "google" supported)
-            cache_enabled: Whether to enable caching (disabled by default)
             temperature: LLM sampling temperature
             optimization_threshold: Minimum tokens to consider optimization
         """
@@ -43,18 +40,6 @@ class TokenOptimizer:
         config = Config()
         llm_config = config.get_llm_config(llm_provider, llm_model)
         translation_config = config.get_translation_config(translation_provider)
-        cache_config = config.get_cache_config()
-        
-        # Initialize cache manager
-        self.cache_manager = None
-        if cache_enabled and cache_config.enabled:
-            redis_config = {
-                "host": cache_config.host,
-                "port": cache_config.port,
-                "db": cache_config.db,
-                "password": cache_config.password
-            }
-            self.cache_manager = CacheManager(redis_config, cache_config.ttl)
         
         # Initialize services
         self.llm_service = LLMService(
@@ -66,8 +51,7 @@ class TokenOptimizer:
         
         self.translation_service = TranslationService(
             translation_config.provider,
-            translation_config.api_key,
-            self.cache_manager
+            translation_config.api_key
         )
         
         self.token_counter = TokenCounter(llm_config.model)

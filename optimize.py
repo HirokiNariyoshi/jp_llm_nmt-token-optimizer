@@ -56,7 +56,6 @@ def main():
         llm_provider="ollama",
         llm_model="qwen2.5:1.5b",
         translation_provider="google",
-        cache_enabled=False,
         optimization_threshold=10
     )
     

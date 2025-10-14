@@ -31,17 +31,6 @@ class TranslationConfig:
 
 
 @dataclass
-class CacheConfig:
-    """Configuration for caching layer."""
-    enabled: bool = True
-    host: str = "localhost"
-    port: int = 6379
-    db: int = 0
-    password: Optional[str] = None
-    ttl: int = 86400  # 24 hours
-
-
-@dataclass
 class OptimizationConfig:
     """Configuration for optimization behavior."""
     enabled: bool = True
@@ -86,18 +75,7 @@ class Config:
             target_lang="en"   # English for processing
         )
     
-    @staticmethod
-    def get_cache_config() -> CacheConfig:
-        """Get cache configuration (disabled by default)."""
-        return CacheConfig(
-            enabled=False,
-            host="localhost",
-            port=6379,
-            db=0,
-            password=None,
-            ttl=86400
-        )
-    
+
     @staticmethod
     def get_optimization_config() -> OptimizationConfig:
         """Get optimization configuration."""
