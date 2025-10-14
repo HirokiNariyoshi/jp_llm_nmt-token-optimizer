@@ -1,6 +1,8 @@
-# Ollama Setup Guide - Completely FREE!
+# Ollama Setup Guide - Local & Free
 
-This project now uses Ollama to run models locally on your computer. **No API keys, no costs, completely free forever!**
+This project uses Ollama to run models locally for testing and development. **No API keys required, completely free!**
+
+For Japanese query optimization, the system translates Japanese→English to reduce token usage with English-optimized models.
 
 ## Step 1: Install Ollama
 
@@ -16,15 +18,15 @@ This project now uses Ollama to run models locally on your computer. **No API ke
 ollama --version
 ```
 
-## Step 2: Download Gemma2 Model
+## Step 2: Download Qwen2.5 Model
 
-Gemma2 is a multilingual model with excellent Japanese support:
+Qwen2.5 1.5B is a lightweight multilingual model with good Japanese support:
 
 ```powershell
-ollama pull gemma2:2b
+ollama pull qwen2.5:1.5b
 ```
 
-This downloads the model (~1.6GB) - only needed once!
+This downloads the model (~986MB) - only needed once!
 
 ## Step 3: Start Ollama Server
 
@@ -34,39 +36,34 @@ Ollama should start automatically, but if needed:
 ollama serve
 ```
 
-## Step 4: Run the Examples
+## Step 4: Run the Optimizer
 
 ```powershell
-# Basic example
-python examples\basic_usage.py
+# Interactive mode - enter your own Japanese query
+python optimize.py
 
-# Comparison (testing Japanese optimization!)
-python examples\comparison.py
-
-# Long prompt
-python examples\long_prompt_demo.py
-
-# Pure conversational
-python examples\conversational_demo.py
+# Or edit optimize.py and set TEST_MODE = True for demo
+# Set COMPARE_MODE = True to query both paths for accurate measurement
 ```
 
 ## Available Models
 
-### Multilingual (Recommended for Japanese):
+### Recommended Models:
 
-- **gemma2:2b** (default) - Google's lightweight multilingual model with Japanese support
-- **gemma2:9b** - Larger, more capable version
-- **qwen2.5:1.5b** - Alibaba's lightweight multilingual model
+- **qwen2.5:1.5b** (default) - Lightweight, good Japanese support (~986MB)
+- **qwen2.5:7b** - More capable but requires more RAM (~4.7GB)
+- **gemma2:2b** - Google's lightweight model (~1.6GB)
+- **gemma2:9b** - Larger version (~5.4GB)
 
 ### Alternative Models:
 
-- **mistral:7b** - Good general model
-- **llama3.2:3b** - Meta's model
+- **mistral:7b** - Good general model (~4.1GB)
+- **llama3.2:3b** - Meta's model (~2GB)
 
 ### Download a model:
 
 ```powershell
-ollama pull gemma2:2b
+ollama pull qwen2.5:1.5b
 ```
 
 ### List installed models:
@@ -80,23 +77,23 @@ ollama list
 ```python
 optimizer = TokenOptimizer(
     llm_provider="ollama",
-    llm_model="gemma2:9b"  # Larger model
+    llm_model="qwen2.5:7b"  # Larger model for better quality
 )
 ```
 
-## Why Ollama + Gemma2?
+## Why Ollama?
 
-✅ **Completely FREE** - No API costs ever
-✅ **Japanese Support** - Gemma2 has excellent multilingual capabilities including Japanese
-✅ **Privacy** - Everything runs on your PC
+✅ **Completely FREE** - No API costs
+✅ **Privacy** - Everything runs locally on your machine
 ✅ **No limits** - Use as much as you want
-✅ **Fast** - Lightweight models work well even with limited RAM
+✅ **Fast** - Good performance with lightweight models
+✅ **Easy testing** - Perfect for development and validation
 
 ## System Requirements
 
-- **Minimum:** 4GB RAM (for gemma2:2b)
-- **Recommended:** 8GB RAM
-- **Storage:** 2-10GB per model
+- **Minimum:** 4GB RAM (for qwen2.5:1.5b)
+- **Recommended:** 8GB+ RAM (for larger models)
+- **Storage:** 1-5GB per model
 
 ## Troubleshooting
 
@@ -111,17 +108,28 @@ ollama serve
 
 ```powershell
 # Download the model first
-ollama pull gemma2:2b
+ollama pull qwen2.5:1.5b
 ```
 
 ### Slow performance
 
-- Use smaller models (gemma2:2b instead of :9b)
+- Use smaller models (qwen2.5:1.5b instead of :7b)
 - Close other applications
 - Upgrade RAM if possible
 
 ## Next Steps
 
-Now that Ollama is set up, you can test if **Japanese shows better token compression** than English!
+Now that Ollama is set up, you can test Japanese query optimization:
 
-Try running `python examples\basic_usage.py` to see the results!
+```powershell
+# Interactive mode
+python optimize.py
+
+# Test mode (edit optimize.py and set TEST_MODE = True)
+python optimize.py
+
+# Compare mode for accurate measurement (set COMPARE_MODE = True)
+python optimize.py
+```
+
+Expected results: **53-58% token savings** when translating Japanese to English for processing!
