@@ -112,8 +112,17 @@ class TokenOptimizer:
     ) -> OptimizationResponse:
         """Execute direct LLM request in Japanese without translation."""
         
+        # Add Japanese instruction to ensure response is in Japanese
+        enhanced_prompt = f"{prompt}\n\nPlease provide your complete response in Japanese (日本語で回答してください)."
+        
+        # Update system prompt if provided
+        if system_prompt:
+            enhanced_system = f"{system_prompt}\n\nIMPORTANT: You must respond in Japanese."
+        else:
+            enhanced_system = "You are a helpful AI assistant. Please respond in Japanese."
+        
         # Generate response directly in Japanese
-        response = self.llm_service.generate(prompt, max_tokens, system_prompt)
+        response = self.llm_service.generate(enhanced_prompt, max_tokens, enhanced_system)
         
         total_time = time.time() - start_time
         
@@ -152,8 +161,15 @@ class TokenOptimizer:
         start_time: float
     ) -> OptimizationResponse:
         """
-        Execute optimized LLM request by translating Japanese→English→Japanese.
-        This reduces token usage for English-optimized models.
+        Execute optimized LLM request with improved single-translation approach.
+        
+        New approach:
+        1. Translate Japanese prompt → English (saves input tokens)
+        2. Instruct LLM to respond in Japanese
+        3. LLM generates Japanese natively (no back-translation needed!)
+        
+        This eliminates the problematic back-translation step that was causing
+        formatting issues and quality degradation.
         """
         
         translation_start = time.time()
@@ -163,34 +179,39 @@ class TokenOptimizer:
             prompt, source_lang="ja", target_lang="en"
         )
         
-        # Translate system prompt if provided
+        # Add instruction to respond in Japanese
+        enhanced_prompt = f"""{prompt_en.text}
+
+Please provide your complete response in Japanese (日本語で回答してください).
+Include any code examples with proper markdown formatting."""
+        
+        # Translate system prompt if provided and add Japanese instruction
         system_prompt_en = None
         if system_prompt:
             system_result = self.translation_service.translate(
                 system_prompt, source_lang="ja", target_lang="en"
             )
-            system_prompt_en = system_result.text
+            system_prompt_en = f"{system_result.text}\n\nAlways respond in Japanese (日本語)."
+        else:
+            system_prompt_en = "Respond in Japanese (日本語で回答してください)."
         
-        translation_to_en_time = time.time() - translation_start
+        translation_time = time.time() - translation_start
         
         # Count English tokens (optimized - should be lower)
-        en_input_tokens = self.token_counter.count_tokens(prompt_en.text)
+        en_input_tokens = self.token_counter.count_tokens(enhanced_prompt)
         if system_prompt_en:
             en_input_tokens += self.token_counter.count_tokens(system_prompt_en)
         
-        # Generate response in English
+        # Generate response - LLM will generate Japanese natively
+        llm_start = time.time()
         response = self.llm_service.generate(
-            prompt_en.text, max_tokens, system_prompt_en
+            enhanced_prompt, max_tokens, system_prompt_en
         )
+        llm_time = time.time() - llm_start
         
-        # Translate English response back to Japanese
-        translation_back_start = time.time()
-        response_ja = self.translation_service.translate(
-            response["content"], source_lang="en", target_lang="ja"
-        )
-        translation_from_en_time = time.time() - translation_back_start
+        # Response is already in Japanese - no back-translation needed!
+        japanese_response = response["content"]
         
-        total_translation_time = translation_to_en_time + translation_from_en_time
         total_time = time.time() - start_time
         
         # Calculate costs
@@ -212,14 +233,14 @@ class TokenOptimizer:
             original_cost=original_cost,
             optimized_cost=optimized_cost,
             cost_saved=original_cost - optimized_cost,
-            translation_time=total_translation_time,
-            llm_time=response["generation_time"],
+            translation_time=translation_time,
+            llm_time=llm_time,
             total_time=total_time,
             used_optimization=True
         )
         
         return OptimizationResponse(
-            content=response_ja.text,
+            content=japanese_response,
             metrics=metrics,
             raw_response=response.get("raw_response")
         )
