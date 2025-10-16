@@ -5,6 +5,7 @@ Reduce LLM token usage for Japanese queries by 15-25% while maintaining high qua
 ## How It Works
 
 Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This library:
+
 1. Translates Japanese prompts → English (saves input tokens)
 2. Instructs the LLM to respond in Japanese natively (avoids back-translation)
 3. Returns high-quality Japanese output directly
@@ -30,11 +31,13 @@ ollama pull qwen2.5:1.5b  # Download model (986MB)
 ## Quick Start
 
 ### Interactive CLI
+
 ```bash
 python optimize.py
 ```
 
 ### Python API
+
 ```python
 from token_optimizer import TokenOptimizer
 
@@ -60,12 +63,14 @@ print(f"Tokens saved: {response.metrics.tokens_saved}")
 ## When To Use
 
 **✅ Best for:**
+
 - Long technical queries (>100 tokens)
 - Code examples and documentation
 - Detailed explanations
 - Situations where quality matters
 
 **❌ Not ideal for:**
+
 - Very short prompts (<50 tokens) - English may be longer than Japanese
 - Real-time chat - Translation adds latency (~1s)
 
@@ -101,6 +106,7 @@ JA prompt → EN translation → LLM (instructed: respond in JA) → JA output
 ```
 
 vs old broken approach:
+
 ```
 JA → EN → LLM → EN → JA
                   ↑ This back-translation corrupts formatting!

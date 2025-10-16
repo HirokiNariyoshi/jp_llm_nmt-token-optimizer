@@ -180,10 +180,7 @@ class TokenOptimizer:
         )
         
         # Add instruction to respond in Japanese
-        enhanced_prompt = f"""{prompt_en.text}
-
-Please provide your complete response in Japanese (日本語で回答してください).
-Include any code examples with proper markdown formatting."""
+        enhanced_prompt = f"{prompt_en.text}\n\nRespond in Japanese."
         
         # Translate system prompt if provided and add Japanese instruction
         system_prompt_en = None
@@ -191,9 +188,9 @@ Include any code examples with proper markdown formatting."""
             system_result = self.translation_service.translate(
                 system_prompt, source_lang="ja", target_lang="en"
             )
-            system_prompt_en = f"{system_result.text}\n\nAlways respond in Japanese (日本語)."
+            system_prompt_en = f"{system_result.text}\n\nRespond in Japanese."
         else:
-            system_prompt_en = "Respond in Japanese (日本語で回答してください)."
+            system_prompt_en = "Respond in Japanese."
         
         translation_time = time.time() - translation_start
         
