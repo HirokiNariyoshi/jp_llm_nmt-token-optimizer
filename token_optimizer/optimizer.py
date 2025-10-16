@@ -112,14 +112,14 @@ class TokenOptimizer:
     ) -> OptimizationResponse:
         """Execute direct LLM request in Japanese without translation."""
         
-        # Add Japanese instruction to ensure response is in Japanese
-        enhanced_prompt = f"{prompt}\n\nPlease provide your complete response in Japanese (日本語で回答してください)."
+        # Add concise Japanese instruction
+        enhanced_prompt = f"{prompt}\n\n日本語で回答してください。"
         
         # Update system prompt if provided
         if system_prompt:
-            enhanced_system = f"{system_prompt}\n\nIMPORTANT: You must respond in Japanese."
+            enhanced_system = f"{system_prompt}\n\n日本語で回答してください。"
         else:
-            enhanced_system = "You are a helpful AI assistant. Please respond in Japanese."
+            enhanced_system = "日本語で回答してください。"
         
         # Generate response directly in Japanese
         response = self.llm_service.generate(enhanced_prompt, max_tokens, enhanced_system)
