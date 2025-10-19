@@ -1,5 +1,5 @@
 """
-Japanese Query Optimizer - Main Interactive Script
+Japanese Query Optimizer - Interactive CLI
 
 Demonstrates token savings by translating Japanese queries to English
 for processing by English-optimized LLMs.
@@ -11,75 +11,36 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from token_optimizer import TokenOptimizer
 
-# Configuration
-TEST_MODE = False  # Set to True to use hardcoded example
-COMPARE_MODE = False  # Set to True to query both paths for accurate comparison (2x slower)
-
-# Test prompt (long conversational example)
-TEST_PROMPT = """
-来月、親友のサプライズバースデーパーティーを企画していますが、
-創造的なアイデアが必要です。彼女は30歳になり、アウトドア活動、
-ヴィンテージの美学、植物やガーデニングに関連することが大好きです。
-仕事のストレスや個人的な課題で大変な一年を過ごしてきたので、
-本当に特別なものにしたいと思っています。
-
-パーティーは私の庭で行う予定です。庭にはたくさんの花や木があり、
-かなり広いスペースがあります。夕暮れ時、おそらく午後6時頃に
-何かできればと思っています。照明が本当に美しい時間帯です。
-約25人が来る予定で、ほとんどが大学時代の親しい友人と、
-彼女が本当に気に入っている同僚数人です。
-
-予算は800ドルから1000ドルで、豪華で高価なものよりも、
-親密で個人的な雰囲気にしたいと考えています。彼女は大音量の音楽や
-派手なものは好きではないので、良い食事、温かい会話、そして
-私たちみんながどれだけ彼女を大切に思っているかを示す
-心のこもった演出のある、居心地の良いガーデンパーティーを
-考えています。
-
-装飾、アクティビティ、食事の選択肢、そして彼女を本当に愛されていると
-感じさせる特別な瞬間やサプライズ要素のアイデアをブレインストーミング
-するのを手伝っていただけますか？また、彼女は非常に観察力があり、
-通常は物事を見抜いてしまうので、彼女に気づかれずにすべてを調整する
-ためのヒントもいただけると助かります。
-"""
-
 
 def main():
     print("=" * 70)
     print("Japanese Query Optimizer")
-    print("Reduces token usage by ~58% for English-optimized LLMs")
+    print("Reduces token usage by 56-60% for English-optimized LLMs")
     print("=" * 70)
     print()
     
     # Initialize optimizer
     optimizer = TokenOptimizer(
         llm_model="qwen2.5:1.5b",
-        optimization_threshold=10
+        optimization_threshold=50
     )
     
-    # Get prompt based on mode
-    if TEST_MODE:
-        print("📝 Using test mode with hardcoded prompt")
-        print()
-        japanese_prompt = TEST_PROMPT
-        print("Prompt preview:")
-        print(japanese_prompt[:200] + "...\n")
-    else:
-        print("📝 Enter your Japanese query (press Enter twice when done):")
-        print()
-        lines = []
-        while True:
-            line = input()
-            if line == "" and len(lines) > 0:
-                break
-            if line:
-                lines.append(line)
-        japanese_prompt = "\n".join(lines)
-        
-        if not japanese_prompt.strip():
-            print("❌ No prompt entered. Exiting.")
-            return
-        print()
+    # Get user input
+    print("📝 Enter your Japanese query (press Enter twice when done):")
+    print()
+    lines = []
+    while True:
+        line = input()
+        if line == "" and len(lines) > 0:
+            break
+        if line:
+            lines.append(line)
+    japanese_prompt = "\n".join(lines)
+    
+    if not japanese_prompt.strip():
+        print("❌ No prompt entered. Exiting.")
+        return
+    print()
     
     # Word count
     word_count = len(japanese_prompt.split())
@@ -105,17 +66,12 @@ def main():
         print()
     
     # Process request
-    if COMPARE_MODE:
-        print("🚀 Processing with compare mode (querying both paths)...")
-        print("   This queries the model twice for accurate measurement")
-    else:
-        print("🚀 Processing with optimization...")
+    print("🚀 Processing with optimization...")
     print()
     
     response = optimizer.optimize_request(
         prompt=japanese_prompt,
-        max_tokens=800 if TEST_MODE else 500,
-        compare_mode=COMPARE_MODE
+        max_tokens=500
     )
     
     # Display results
@@ -163,11 +119,6 @@ def main():
     print()
     
     # Status summary
-    if COMPARE_MODE:
-        print("ℹ️  Compare mode: Token counts are from actual model responses")
-        print("   (not tiktoken estimates)")
-        print()
-    
     if metrics.used_optimization:
         if metrics.tokens_saved > 0:
             print("✅ Optimization successful! English translation reduced token usage.")
