@@ -21,7 +21,7 @@ def main():
     
     # Initialize optimizer
     optimizer = TokenOptimizer(
-        llm_model="qwen2.5:1.5b",
+        llm_model="llama3.2:3b",
         optimization_threshold=50
     )
     

@@ -19,7 +19,7 @@ class TokenOptimizer:
     
     def __init__(
         self,
-        llm_model: str = "qwen2.5:1.5b",
+        llm_model: str = "llama3.2:3b",
         temperature: float = 0.7,
         optimization_threshold: int = 50
     ):

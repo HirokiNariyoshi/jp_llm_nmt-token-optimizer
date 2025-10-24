@@ -25,7 +25,7 @@ pip install -r requirements.txt
 # 2. Install and setup Ollama
 # Download from https://ollama.ai
 ollama serve  # Start Ollama server
-ollama pull qwen2.5:1.5b  # Download model (986MB)
+ollama pull llama3.2:3b  # Download model (~2GB)
 
 # Note: NLLB translation model (600MB) will auto-download on first use
 ```
@@ -43,7 +43,7 @@ python optimize.py
 ```python
 from token_optimizer import TokenOptimizer
 
-optimizer = TokenOptimizer(llm_model="qwen2.5:1.5b")
+optimizer = TokenOptimizer(llm_model="llama3.2:3b")
 
 response = optimizer.optimize_request(
     prompt="Pythonで機械学習モデルを作る方法を教えてください。",
@@ -96,7 +96,7 @@ response = optimizer.optimize_request(
 
 # Auto-decide (default, threshold=50 tokens)
 optimizer = TokenOptimizer(
-    llm_model="qwen2.5:1.5b",
+    llm_model="llama3.2:3b",
     optimization_threshold=50
 )
 ```

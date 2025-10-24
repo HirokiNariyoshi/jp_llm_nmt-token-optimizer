@@ -95,7 +95,7 @@ class LLMService:
         Initialize Ollama LLM service.
         
         Args:
-            model: Ollama model name to use (e.g., "qwen2.5:1.5b")
+            model: Ollama model name to use (e.g., "llama3.2:3b")
             temperature: Sampling temperature
         """
         self.provider_name = "ollama"

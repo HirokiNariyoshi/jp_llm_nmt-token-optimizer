@@ -45,8 +45,8 @@ class Config:
     @staticmethod
     def get_llm_config(model: Optional[str] = None) -> LLMConfig:
         """Get LLM configuration for Ollama."""
-        # Use Qwen2.5 1.5B - lightweight multilingual model with Japanese support
-        default_model = model or "qwen2.5:1.5b"
+        # Use Llama 3.2 3B - Meta's modern multilingual model with excellent Japanese support
+        default_model = model or "llama3.2:3b"
         
         return LLMConfig(
             model=default_model

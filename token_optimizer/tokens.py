@@ -46,7 +46,7 @@ class TokenCounter:
         return 0.0
     
     @staticmethod
-    def compare_languages(japanese_text: str, english_text: str, model: str = "qwen2.5:1.5b") -> dict:
+    def compare_languages(japanese_text: str, english_text: str, model: str = "llama3.2:3b") -> dict:
         """
         Compare token counts between Japanese and English versions.
         Japanese typically uses more tokens in English-optimized models.
