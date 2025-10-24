@@ -44,29 +44,11 @@ def main():
     
     # Word count
     word_count = len(japanese_prompt.split())
-    print(f"📊 Analyzing query ({word_count} words)...")
+    print(f"📊 Processing query ({word_count} words)...")
     print()
-    
-    # Analyze potential savings
-    analysis = optimizer.analyze_potential_savings(japanese_prompt, output_tokens=500)
-    
-    print("Token Efficiency Analysis:")
-    print(f"  Japanese tokens:  {analysis['japanese_input_tokens']}")
-    print(f"  English tokens:   {analysis['english_input_tokens']}")
-    print(f"  Tokens saved:     {analysis['input_tokens_saved']} ({analysis['token_reduction_percent']:.1f}%)")
-    print(f"  Cost saved:       ${analysis['cost_saved']:.6f}")
-    print(f"  Recommendation:   {analysis['recommendation']}")
-    print()
-    
-    if analysis['input_tokens_saved'] <= 0:
-        print("⚠️  English translation would not save tokens for this query.")
-        proceed = input("Continue anyway? (y/n): ")
-        if proceed.lower() != 'y':
-            return
-        print()
     
     # Process request
-    print("🚀 Processing with optimization...")
+    print("🚀 Optimizing with translation...")
     print()
     
     response = optimizer.optimize_request(
