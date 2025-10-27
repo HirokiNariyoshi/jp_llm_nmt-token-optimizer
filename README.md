@@ -6,11 +6,11 @@ Reduce LLM token usage for Japanese queries by **56-60%** on realistic prompts (
 
 Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This library:
 
-1. Translates Japanese prompts → English using **Meta's NLLB** (better quality than Google Translate)
+1. Translates Japanese prompts → English using **Meta's NLLB** neural machine translation
 2. Instructs the LLM to respond in Japanese natively (avoids back-translation)
 3. Returns high-quality Japanese output directly
 
-**Result:** **56-60% token savings** with superior translation quality
+**Result:** **56-60% token savings**
 
 ## Installation
 
@@ -57,11 +57,10 @@ print(f"Tokens saved: {response.metrics.tokens_saved}")
 ## Features
 
 - ✅ **56-60% token savings** on realistic prompts (100+ tokens)
-- ✅ **Superior quality** - Uses Meta's NLLB (better than Google Translate)
-- ✅ **More concise** - NLLB produces more compact translations
+- ✅ **High-quality translation** - Uses Meta's NLLB neural machine translation
+- ✅ **Concise output** - NLLB produces compact, efficient translations
 - ✅ **Perfect formatting** - Preserves code blocks, markdown, etc.
 - ✅ **Free & Offline** - Local processing, no API keys needed
-- ✅ **Automatic fallback** - Falls back to Google Translate if NLLB unavailable
 
 ## When To Use
 
@@ -122,7 +121,7 @@ llm_nmt-token-optimizer/
 ├── token_optimizer/          # Core library
 │   ├── optimizer.py         # Main optimizer logic
 │   ├── llm.py              # Ollama integration
-│   ├── translation.py      # NLLB + Google Translate
+│   ├── translation.py      # NLLB translation
 │   └── tokens.py           # Token counting
 ├── optimize.py             # Interactive CLI
 └── requirements.txt        # Dependencies
@@ -130,13 +129,12 @@ llm_nmt-token-optimizer/
 
 ## Translation Technology
 
-This project uses **Meta's NLLB (No Language Left Behind)** as the primary translation model:
+This project uses **Meta's NLLB (No Language Left Behind)** neural machine translation:
 
 - **Model**: facebook/nllb-200-distilled-600M
-- **Quality**: Superior to Google Translate for technical content
+- **Quality**: State-of-the-art multilingual translation for technical content
 - **Token Efficiency**: Achieves 56-60% reduction on realistic prompts (100+ tokens)
-- **Offline**: Runs locally, no API calls
-- **Fallback**: Automatically uses Google Translate if NLLB unavailable
+- **Offline**: Runs locally, no API calls or network dependency
 
 ## License
 

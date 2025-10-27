@@ -21,7 +21,7 @@ class LLMConfig:
 
 @dataclass
 class TranslationConfig:
-    """Configuration for Google Translate."""
+    """Configuration for NLLB translation."""
     source_lang: str = "ja"  # Japanese input
     target_lang: str = "en"  # English for LLM processing
 
@@ -54,7 +54,7 @@ class Config:
     
     @staticmethod
     def get_translation_config() -> TranslationConfig:
-        """Get translation configuration for Google Translate."""
+        """Get translation configuration for NLLB."""
         return TranslationConfig(
             source_lang="ja",  # Japanese input
             target_lang="en"   # English for processing

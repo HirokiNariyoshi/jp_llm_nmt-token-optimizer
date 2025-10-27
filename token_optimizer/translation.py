@@ -1,5 +1,5 @@
 """
-Translation service with NLLB (primary) and Google Translate (fallback).
+Translation service using Meta's NLLB (No Language Left Behind).
 """
 
 import time
@@ -9,7 +9,7 @@ from .models import TranslationResult
 
 
 class NLLBTranslator:
-    """NLLB-based translator - better quality and token efficiency than Google."""
+    """Neural Machine Translation using Meta's NLLB-200."""
     
     def __init__(self, model_name: str = "facebook/nllb-200-distilled-600M"):
         """Initialize NLLB translator."""
@@ -79,64 +79,13 @@ class NLLBTranslator:
             raise RuntimeError(f"NLLB translation failed: {str(e)}")
 
 
-class GoogleTranslator:
-    """Google Translate using deep-translator - free and simple."""
-    
-    def translate(self, text: str, source_lang: str, target_lang: str) -> TranslationResult:
-        """Translate using Google Translate."""
-        try:
-            from deep_translator import GoogleTranslator as GT
-            
-            # Map language codes
-            source = "en" if source_lang.lower() == "en" else source_lang
-            target = "ja" if target_lang.lower() == "ja" else target_lang
-            
-            translator = GT(source=source, target=target)
-            translated = translator.translate(text)
-            
-            return TranslationResult(
-                text=translated,
-                source_lang=source_lang,
-                target_lang=target_lang,
-                provider="Google",
-                cached=False
-            )
-            
-        except ImportError:
-            raise ImportError("deep-translator not installed. Install with: pip install deep-translator")
-        except Exception as e:
-            raise RuntimeError(f"Google translation failed: {str(e)}")
-
-
 class TranslationService:
-    """Manages translation with NLLB (primary) and Google Translate (fallback)."""
+    """Translation service using NLLB."""
     
-    def __init__(self, use_nllb: bool = True):
-        """
-        Initialize translation service.
-        
-        Args:
-            use_nllb: Try to use NLLB first (falls back to Google if unavailable)
-        """
-        self.provider_name = None
-        self.provider = None
-        
-        # Try NLLB first (better quality)
-        if use_nllb:
-            try:
-                self.provider = NLLBTranslator()
-                self.provider_name = "nllb"
-                return
-            except (ImportError, RuntimeError) as e:
-                print(f"⚠ NLLB not available: {e}")
-                print("→ Falling back to Google Translate")
-        
-        # Fallback to Google Translate
-        try:
-            self.provider = GoogleTranslator()
-            self.provider_name = "google"
-        except Exception as e:
-            raise RuntimeError(f"No translation provider available: {e}")
+    def __init__(self):
+        """Initialize NLLB translation service."""
+        self.provider = NLLBTranslator()
+        self.provider_name = "nllb"
     
     def translate(self, text: str, source_lang: str = "en", 
                   target_lang: str = "ja") -> TranslationResult:
