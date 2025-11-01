@@ -15,7 +15,7 @@ from token_optimizer import TokenOptimizer
 def main():
     print("=" * 70)
     print("Japanese Query Optimizer")
-    print("Reduces token usage by 56-60% for English-optimized LLMs")
+    print("Reduces LLM token usage by ~65% for English-optimized LLMs")
     print("=" * 70)
     print()
     
@@ -95,7 +95,7 @@ def main():
     
     # Time analysis
     print("⏱️  PERFORMANCE:")
-    print(f"  Translation time: {metrics.translation_time:.2f}s")
+    print(f"  Translation time: {metrics.translation_time:.2f}s ({metrics.time_overhead_percent:.1f}% of total)")
     print(f"  LLM time:         {metrics.llm_time:.2f}s")
     print(f"  Total time:       {metrics.total_time:.2f}s")
     print()
@@ -103,8 +103,9 @@ def main():
     # Status summary
     if metrics.used_optimization:
         if metrics.tokens_saved > 0:
-            print("✅ Optimization successful! English translation reduced token usage.")
-            print(f"   For high-volume applications, this saves ~{metrics.token_reduction_percent:.1f}% on API costs.")
+            print("✅ Optimization successful! English translation reduced LLM token usage.")
+            print(f"   Token reduction: {metrics.token_reduction_percent:.1f}%")
+            print(f"   Translation overhead: {metrics.translation_time:.1f}s ({metrics.time_overhead_percent:.0f}% of time)")
         else:
             print("⚠️  Optimization used but no savings (English similar to Japanese for this query)")
     else:

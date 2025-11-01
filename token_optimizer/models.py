@@ -23,7 +23,7 @@ class OptimizationMetrics:
     
     @property
     def token_reduction_percent(self) -> float:
-        """Calculate percentage of tokens saved."""
+        """Calculate percentage of LLM tokens saved."""
         if self.original_tokens == 0:
             return 0.0
         return (self.tokens_saved / self.original_tokens) * 100
@@ -34,6 +34,13 @@ class OptimizationMetrics:
         if self.original_cost == 0:
             return 0.0
         return (self.cost_saved / self.original_cost) * 100
+    
+    @property
+    def time_overhead_percent(self) -> float:
+        """Calculate translation time as percentage of total time."""
+        if self.total_time == 0:
+            return 0.0
+        return (self.translation_time / self.total_time) * 100
 
 
 @dataclass
@@ -62,6 +69,7 @@ class OptimizationResponse:
                 "cost_saved": self.metrics.cost_saved,
                 "cost_reduction_percent": self.metrics.cost_reduction_percent,
                 "translation_time": self.metrics.translation_time,
+                "time_overhead_percent": self.metrics.time_overhead_percent,
                 "llm_time": self.metrics.llm_time,
                 "total_time": self.metrics.total_time,
                 "used_optimization": self.metrics.used_optimization

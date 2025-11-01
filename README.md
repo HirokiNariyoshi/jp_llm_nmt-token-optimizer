@@ -1,6 +1,6 @@
 # TokenOptimizer - Japanese LLM Token Optimizer
 
-Reduce LLM token usage for Japanese queries by **56-60%** on realistic prompts (100+ tokens) while maintaining high quality output.
+Reduce LLM token usage for Japanese queries by **~65%** on realistic prompts (100+ tokens) while maintaining high quality output.
 
 ## How It Works
 
@@ -10,7 +10,7 @@ Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This li
 2. Instructs the LLM to respond in Japanese natively (avoids back-translation)
 3. Returns high-quality Japanese output directly
 
-**Result:** **56-60% token savings**
+**Result:** **~65% LLM token reduction** on prompts ≥100 tokens
 
 ## Installation
 
@@ -56,11 +56,22 @@ print(f"Tokens saved: {response.metrics.tokens_saved}")
 
 ## Features
 
-- ✅ **56-60% token savings** on realistic prompts (100+ tokens)
+- ✅ **~65% LLM token reduction** on realistic prompts (100+ tokens)
 - ✅ **High-quality translation** - Uses Meta's NLLB neural machine translation
 - ✅ **Concise output** - NLLB produces compact, efficient translations
 - ✅ **Perfect formatting** - Preserves code blocks, markdown, etc.
 - ✅ **Free & Offline** - Local processing, no API keys needed
+
+## Performance Metrics
+
+The optimizer provides transparent metrics for each request:
+
+- **LLM Token Reduction**: Measures tokens saved on the LLM side (~65% for prompts ≥100 tokens)
+- **Translation Time**: Time spent on JA→EN translation (typically 1-3s)
+- **Time Overhead %**: Translation time as percentage of total request time
+- **Cost Savings**: Estimated cost reduction (important for paid APIs like GPT-4, Claude)
+
+**Note**: Translation uses NLLB's internal tokenization (different from LLM tokens), so we track translation impact via time rather than token counts.
 
 ## When To Use
 
@@ -106,8 +117,6 @@ optimizer = TokenOptimizer(
 JA prompt → EN translation → LLM (instructed: respond in JA) → JA output
          ↑ Saves tokens                                        ↑ Native quality
 ```
-
-
 
 ## Project Structure
 

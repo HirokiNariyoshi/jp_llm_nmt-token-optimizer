@@ -34,7 +34,6 @@ class TokenCounter:
         Estimate the cost for a request.
         
         For Ollama (local models), cost is always $0.00.
-        This method exists for API compatibility.
         
         Args:
             input_tokens: Number of input tokens
