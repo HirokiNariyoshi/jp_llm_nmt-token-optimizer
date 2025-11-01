@@ -107,12 +107,7 @@ JA prompt → EN translation → LLM (instructed: respond in JA) → JA output
          ↑ Saves tokens                                        ↑ Native quality
 ```
 
-vs old broken approach:
 
-```
-JA → EN → LLM → EN → JA
-                  ↑ This back-translation corrupts formatting!
-```
 
 ## Project Structure
 
@@ -126,15 +121,6 @@ llm_nmt-token-optimizer/
 ├── optimize.py             # Interactive CLI
 └── requirements.txt        # Dependencies
 ```
-
-## Translation Technology
-
-This project uses **Meta's NLLB (No Language Left Behind)** neural machine translation:
-
-- **Model**: facebook/nllb-200-distilled-600M
-- **Quality**: State-of-the-art multilingual translation for technical content
-- **Token Efficiency**: Achieves 56-60% reduction on realistic prompts (100+ tokens)
-- **Offline**: Runs locally, no API calls or network dependency
 
 ## License
 
