@@ -14,6 +14,11 @@ Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This li
 
 ## Installation
 
+**Requirements:**
+- Python 3.8+ (Python 3.10+ recommended)
+- 4GB RAM minimum (8GB recommended for smooth operation)
+- Ollama installed and running
+
 ```bash
 # 1. Clone and setup
 git clone https://github.com/HirokiNariyoshi/llm_nmt-token-optimizer.git
@@ -36,6 +41,52 @@ ollama pull llama3.2:3b  # Download model (~2GB)
 
 ```bash
 python optimize.py
+```
+
+**Example output:**
+
+```
+Japanese Query Optimizer
+Reduces LLM token usage by ~65% for English-optimized LLMs
+======================================================================
+
+📝 Enter your Japanese query (press Enter twice when done):
+
+Pythonで機械学習モデルを作る方法を教えてください。
+
+📊 Processing query (1 words)...
+🚀 Optimizing with translation...
+
+======================================================================
+RESPONSE
+======================================================================
+
+機械学習モデルを作成するには... (Japanese response here)
+
+======================================================================
+OPTIMIZATION METRICS
+======================================================================
+
+📊 TOKEN USAGE:
+  Original tokens:  86
+  Optimized tokens: 39
+  Tokens saved:     47
+  Reduction:        54.7%
+
+💰 COST SAVINGS:
+  Without optimization: $0.000000
+  With optimization:    $0.000000
+  Saved:                $0.000000
+  Cost reduction:       0.0%
+
+⏱️  PERFORMANCE:
+  Translation time: 3.2s (25% of total)
+  LLM time:         9.5s
+  Total time:       12.7s
+
+✅ Optimization successful! English translation reduced LLM token usage.
+   Token reduction: 54.7%
+   Translation overhead: 3.2s (25% of time)
 ```
 
 ### Python API
@@ -130,6 +181,28 @@ llm_nmt-token-optimizer/
 ├── optimize.py             # Interactive CLI
 └── requirements.txt        # Dependencies
 ```
+
+## Troubleshooting
+
+**"Could not connect to Ollama"**
+- Ensure Ollama is installed: https://ollama.com/download
+- Start Ollama server: `ollama serve`
+- Verify it's running: `ollama list`
+
+**"Model requires more system memory"**
+- Close other applications to free RAM
+- Try a smaller model: `ollama pull qwen2.5:1.5b`
+- Use the smaller model: `TokenOptimizer(llm_model="qwen2.5:1.5b")`
+
+**"NLLB model loading is slow"**
+- First run downloads 600MB model (one-time)
+- Subsequent runs load from cache (~10-20 seconds)
+- Model stays in memory after first translation
+
+**Translation seems stuck**
+- NLLB processes on CPU (can be slow on older hardware)
+- Typical translation time: 1-5s depending on text length
+- Progress isn't shown during translation
 
 ## License
 
