@@ -12,20 +12,29 @@ class NLLBTranslator:
     """Neural Machine Translation using Meta's NLLB-200."""
     
     def __init__(self, model_name: str = "facebook/nllb-200-distilled-600M"):
-        """Initialize NLLB translator."""
+        """Initialize NLLB translator with lazy loading."""
+        self.model_name = model_name
+        self.model = None
+        self.tokenizer = None
+        
+        # Language code mapping
+        self.lang_codes = {
+            "ja": "jpn_Jpan",
+            "en": "eng_Latn"
+        }
+    
+    def _load_model(self):
+        """Lazy load the NLLB model when first needed."""
+        if self.model is not None:
+            return
+            
         try:
             from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
             
-            print(f"Loading NLLB model ({model_name})... This may take a minute on first run.")
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            
-            # Language code mapping
-            self.lang_codes = {
-                "ja": "jpn_Jpan",
-                "en": "eng_Latn"
-            }
-            
+            print(f"Loading NLLB model ({self.model_name})...")
+            print("This may take a minute on first run (downloading ~600MB)...")
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             print("✓ NLLB model loaded successfully!")
             
         except ImportError:
@@ -38,6 +47,9 @@ class NLLBTranslator:
     
     def translate(self, text: str, source_lang: str, target_lang: str) -> TranslationResult:
         """Translate using NLLB."""
+        # Lazy load model on first use
+        self._load_model()
+        
         try:
             # Get language codes
             src_code = self.lang_codes.get(source_lang.lower(), "eng_Latn")
