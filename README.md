@@ -107,11 +107,11 @@ print(f"Tokens saved: {response.metrics.tokens_saved}")
 
 ## Features
 
-- ✅ **~65% LLM token reduction** on realistic prompts (100+ tokens)
-- ✅ **High-quality translation** - Uses Meta's NLLB neural machine translation
-- ✅ **Concise output** - NLLB produces compact, efficient translations
-- ✅ **Perfect formatting** - Preserves code blocks, markdown, etc.
-- ✅ **Free & Offline** - Local processing, no API keys needed
+- **~65% LLM token reduction** on realistic prompts (100+ tokens)
+- **High-quality translation** - Uses Meta's NLLB neural machine translation
+- **Concise output** - NLLB produces compact, efficient translations
+- **Perfect formatting** - Preserves code blocks, markdown, etc.
+- **Free & Offline** - Local processing, no API keys needed
 
 ## Performance Metrics
 
