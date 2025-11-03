@@ -1,4 +1,4 @@
-# TokenOptimizer - Japanese LLM Token Optimizer
+# Japanese LLM Token Optimizer
 
 Reduce LLM token usage for Japanese queries by **~65%** on realistic prompts (100+ tokens) while maintaining high quality output.
 
