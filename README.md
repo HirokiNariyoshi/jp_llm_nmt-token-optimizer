@@ -2,6 +2,8 @@
 
 Reduce LLM token usage for Japanese queries by **~65%** on realistic prompts (100+ tokens) while maintaining high quality output.
 
+Available as both a **Python library** and **REST API** for easy integration.
+
 ## How It Works
 
 Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This library:
@@ -15,6 +17,7 @@ Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This li
 ## Installation
 
 **Requirements:**
+
 - Python 3.8+ (Python 3.10+ recommended)
 - 4GB RAM minimum (8GB recommended for smooth operation)
 - Ollama installed and running
@@ -36,6 +39,53 @@ ollama pull llama3.2:3b  # Download model (~2GB)
 ```
 
 ## Quick Start
+
+### REST API (Docker)
+
+```bash
+# Start the API
+docker-compose up -d
+
+# Test with curl
+curl -X POST http://localhost:8000/optimize \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Pythonで機械学習を始める方法は？", "max_tokens": 500}'
+
+# View interactive docs
+open http://localhost:8000/docs
+```
+
+**API Response:**
+
+```json
+{
+  "content": "機械学習を始めるには...",
+  "metrics": {
+    "token_reduction_percent": 54.7,
+    "tokens_saved": 47,
+    "translation_time": 3.2,
+    "total_time": 12.7
+  }
+}
+```
+
+See [examples/api_clients.md](examples/api_clients.md) for Python, JavaScript, and curl examples.
+
+### Python Library
+
+```python
+from token_optimizer import TokenOptimizer
+
+optimizer = TokenOptimizer(llm_model="llama3.2:3b")
+
+response = optimizer.optimize_request(
+    prompt="Pythonで機械学習モデルを作る方法を教えてください。",
+    max_tokens=500
+)
+
+print(response.content)  # Japanese output
+print(f"Tokens saved: {response.metrics.tokens_saved}")
+```
 
 ### Interactive CLI
 
@@ -177,29 +227,47 @@ llm_nmt-token-optimizer/
 │   ├── optimizer.py         # Main optimizer logic
 │   ├── llm.py              # Ollama integration
 │   ├── translation.py      # NLLB translation
-│   └── tokens.py           # Token counting
+│   ├── tokens.py           # Token counting
+│   └── models.py           # Data models
+├── api.py                   # FastAPI REST server
 ├── optimize.py             # Interactive CLI
-└── requirements.txt        # Dependencies
+├── Dockerfile              # Container configuration
+├── docker-compose.yml      # Docker Compose setup
+├── requirements.txt        # Python dependencies
+└── examples/               # API client examples
+    └── api_clients.md      # Python, JS, curl examples
 ```
+
+## API Endpoints
+
+- **POST /optimize** - Optimize a Japanese query
+- **GET /health** - Health check endpoint
+- **GET /** - API information
+- **GET /docs** - Interactive API documentation (Swagger UI)
+- **GET /redoc** - Alternative API docs (ReDoc)
 
 ## Troubleshooting
 
 **"Could not connect to Ollama"**
+
 - Ensure Ollama is installed: https://ollama.com/download
 - Start Ollama server: `ollama serve`
 - Verify it's running: `ollama list`
 
 **"Model requires more system memory"**
+
 - Close other applications to free RAM
 - Try a smaller model: `ollama pull qwen2.5:1.5b`
 - Use the smaller model: `TokenOptimizer(llm_model="qwen2.5:1.5b")`
 
 **"NLLB model loading is slow"**
+
 - First run downloads 600MB model (one-time)
 - Subsequent runs load from cache (~10-20 seconds)
 - Model stays in memory after first translation
 
 **Translation seems stuck**
+
 - NLLB processes on CPU (can be slow on older hardware)
 - Typical translation time: 1-5s depending on text length
 - Progress isn't shown during translation
