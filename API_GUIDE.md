@@ -1,18 +1,14 @@
 # TokenOptimizer API Guide
 
-Complete guide for using the TokenOptimizer REST API.
-
 ## Quick Start
 
-### 1. Start the API Server
-
-**Option A: Using Docker (Recommended)**
+### Using Docker (Recommended)
 
 ```bash
 docker-compose up
 ```
 
-**Option B: Using Python directly**
+### Using Python directly
 
 ```bash
 # Make sure Ollama is running
@@ -23,8 +19,6 @@ uvicorn api:app --reload
 ```
 
 The API will be available at `http://localhost:8000`
-
----
 
 ## API Endpoints
 
@@ -51,8 +45,6 @@ Returns API information and available endpoints.
 }
 ```
 
----
-
 ### Health Check
 
 ```http
@@ -70,8 +62,6 @@ Check API health and dependency status.
   "ollama_connected": true
 }
 ```
-
----
 
 ### Optimize Query
 
@@ -122,8 +112,6 @@ Optimize a Japanese query for LLM processing.
 }
 ```
 
----
-
 ## Usage Examples
 
 ### cURL
@@ -156,19 +144,15 @@ curl -X POST http://localhost:8000/optimize \
 curl http://localhost:8000/health
 ```
 
----
-
 ### Python
 
-**Using requests library:**
+Using requests library:
 
 ```python
 import requests
 
-# API endpoint
 API_URL = "http://localhost:8000"
 
-# Optimize a query
 response = requests.post(
     f"{API_URL}/optimize",
     json={
@@ -183,7 +167,7 @@ print(f"Token reduction: {result['metrics']['token_reduction_percent']:.1f}%")
 print(f"Total time: {result['metrics']['total_time']:.2f}s")
 ```
 
-**Async client:**
+Async client:
 
 ```python
 import httpx
@@ -197,15 +181,12 @@ async def optimize_query(prompt: str):
         )
         return response.json()
 
-# Usage
 result = asyncio.run(optimize_query("Pythonで..."))
 ```
 
----
-
 ### JavaScript/Node.js
 
-**Using fetch:**
+Using fetch:
 
 ```javascript
 const response = await fetch("http://localhost:8000/optimize", {
@@ -224,7 +205,7 @@ console.log("Response:", result.content);
 console.log(`Token reduction: ${result.metrics.token_reduction_percent}%`);
 ```
 
-**Using axios:**
+Using axios:
 
 ```javascript
 const axios = require("axios");
@@ -238,8 +219,6 @@ console.log("Response:", result.data.content);
 console.log(`Tokens saved: ${result.data.metrics.tokens_saved}`);
 ```
 
----
-
 ## Interactive Documentation
 
 FastAPI provides automatic interactive documentation:
@@ -247,26 +226,17 @@ FastAPI provides automatic interactive documentation:
 - **Swagger UI**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 
-These interfaces allow you to:
-
-- Explore all API endpoints
-- Test requests directly in the browser
-- View request/response schemas
-- Download OpenAPI specification
-
----
-
 ## Docker Deployment
 
 ### Build and Run
 
-**Development:**
+Development:
 
 ```bash
 docker-compose up
 ```
 
-**Production:**
+Production:
 
 ```bash
 docker-compose -f docker-compose.yml up -d
@@ -282,13 +252,9 @@ Environment variables (set in `docker-compose.yml`):
 
 ### Scaling
 
-Scale the API service:
-
 ```bash
 docker-compose up --scale api=3
 ```
-
----
 
 ## Error Handling
 
@@ -302,7 +268,7 @@ docker-compose up --scale api=3
 }
 ```
 
-_Solution: Wait for NLLB model to load (first request only)_
+Solution: Wait for NLLB model to load (first request only)
 
 **500 Internal Server Error**
 
@@ -312,7 +278,7 @@ _Solution: Wait for NLLB model to load (first request only)_
 }
 ```
 
-_Solution: Ensure Ollama is running (`ollama serve`)_
+Solution: Ensure Ollama is running (`ollama serve`)
 
 **422 Validation Error**
 
@@ -328,9 +294,7 @@ _Solution: Ensure Ollama is running (`ollama serve`)_
 }
 ```
 
-_Solution: Check request parameters match the schema_
-
----
+Solution: Check request parameters match the schema
 
 ## Performance Tips
 
@@ -340,19 +304,17 @@ _Solution: Check request parameters match the schema_
 4. **Batch Processing**: For multiple prompts, send requests in parallel
 5. **Timeout**: Set appropriate timeouts (recommend 30s minimum)
 
----
-
 ## Monitoring
 
 ### Logs
 
-**Docker logs:**
+Docker logs:
 
 ```bash
 docker-compose logs -f api
 ```
 
-**Application logs:**
+Application logs:
 
 ```bash
 tail -f logs/api.log  # if configured
@@ -367,11 +329,9 @@ Monitor these metrics from the `/optimize` response:
 - `llm_time`: LLM generation time
 - `total_time`: End-to-end latency
 
----
-
 ## Security Considerations
 
-**For Production Deployment:**
+For production deployment:
 
 1. **Authentication**: Add API key or OAuth2
 2. **Rate Limiting**: Implement request throttling
@@ -394,8 +354,6 @@ server {
     }
 }
 ```
-
----
 
 ## Support
 
