@@ -26,7 +26,7 @@ def main():
     )
     
     # Get user input
-    print("📝 Enter your Japanese query (press Enter twice when done):")
+    print("Enter your Japanese query (press Enter twice when done):")
     print()
     lines = []
     while True:
@@ -38,17 +38,17 @@ def main():
     japanese_prompt = "\n".join(lines)
     
     if not japanese_prompt.strip():
-        print("❌ No prompt entered. Exiting.")
+        print("No prompt entered. Exiting.")
         return
     print()
     
     # Word count
     word_count = len(japanese_prompt.split())
-    print(f"📊 Processing query ({word_count} words)...")
+    print(f"Processing query ({word_count} words)...")
     print()
     
     # Process request
-    print("🚀 Optimizing with translation...")
+    print("Optimizing with translation...")
     print()
     
     response = optimizer.optimize_request(
@@ -78,7 +78,7 @@ def main():
     metrics = response.metrics
     
     # Token analysis
-    print("📊 TOKEN USAGE:")
+    print("TOKEN USAGE:")
     print(f"  Original tokens:  {metrics.original_tokens}")
     print(f"  Optimized tokens: {metrics.optimized_tokens}")
     print(f"  Tokens saved:     {metrics.tokens_saved}")
@@ -86,7 +86,7 @@ def main():
     print()
     
     # Cost analysis
-    print("💰 COST SAVINGS:")
+    print("COST SAVINGS:")
     print(f"  Without optimization: ${metrics.original_cost:.6f}")
     print(f"  With optimization:    ${metrics.optimized_cost:.6f}")
     print(f"  Saved:                ${metrics.cost_saved:.6f}")
@@ -94,7 +94,7 @@ def main():
     print()
     
     # Time analysis
-    print("⏱️  PERFORMANCE:")
+    print("PERFORMANCE:")
     print(f"  Translation time: {metrics.translation_time:.2f}s ({metrics.time_overhead_percent:.1f}% of total)")
     print(f"  LLM time:         {metrics.llm_time:.2f}s")
     print(f"  Total time:       {metrics.total_time:.2f}s")
@@ -103,13 +103,13 @@ def main():
     # Status summary
     if metrics.used_optimization:
         if metrics.tokens_saved > 0:
-            print("✅ Optimization successful! English translation reduced LLM token usage.")
-            print(f"   Token reduction: {metrics.token_reduction_percent:.1f}%")
-            print(f"   Translation overhead: {metrics.translation_time:.1f}s ({metrics.time_overhead_percent:.0f}% of time)")
+            print("Optimization successful! English translation reduced LLM token usage.")
+            print(f"Token reduction: {metrics.token_reduction_percent:.1f}%")
+            print(f"Translation overhead: {metrics.translation_time:.1f}s ({metrics.time_overhead_percent:.0f}% of time)")
         else:
-            print("⚠️  Optimization used but no savings (English similar to Japanese for this query)")
+            print("Optimization used but no savings (English similar to Japanese for this query)")
     else:
-        print("ℹ️  Direct Japanese used (was more efficient than translating)")
+        print("Direct Japanese used (was more efficient than translating)")
     
     print()
     print("=" * 70)
@@ -121,6 +121,6 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\n❌ Cancelled by user")
+        print("\n\nCancelled by user")
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\nError: {e}")
