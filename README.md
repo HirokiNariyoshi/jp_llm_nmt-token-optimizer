@@ -100,12 +100,12 @@ Japanese Query Optimizer
 Reduces LLM token usage by ~65% for English-optimized LLMs
 ======================================================================
 
-📝 Enter your Japanese query (press Enter twice when done):
+Enter your Japanese query (press Enter twice when done):
 
 Pythonで機械学習モデルを作る方法を教えてください。
 
-📊 Processing query (1 words)...
-🚀 Optimizing with translation...
+Processing query (1 words)...
+Optimizing with translation...
 
 ======================================================================
 RESPONSE
@@ -117,29 +117,29 @@ RESPONSE
 OPTIMIZATION METRICS
 ======================================================================
 
-📊 TOKEN USAGE:
+TOKEN USAGE:
   Original tokens:  86
   Optimized tokens: 39
   Tokens saved:     47
   Reduction:        54.7%
 
-💰 COST SAVINGS:
+COST SAVINGS:
   Without optimization: $0.000000
   With optimization:    $0.000000
   Saved:                $0.000000
   Cost reduction:       0.0%
 
-⏱️  PERFORMANCE:
+PERFORMANCE:
   Translation time: 3.2s (25% of total)
   LLM time:         9.5s
   Total time:       12.7s
 
-✅ Optimization successful! English translation reduced LLM token usage.
-   Token reduction: 54.7%
-   Translation overhead: 3.2s (25% of time)
+Optimization successful! English translation reduced LLM token usage.
+Token reduction: 54.7%
+Translation overhead: 3.2s (25% of time)
 ```
 
-### Python API
+## Configuration
 
 ```python
 from token_optimizer import TokenOptimizer
@@ -157,33 +157,31 @@ print(f"Tokens saved: {response.metrics.tokens_saved}")
 
 ## Features
 
-- **~65% LLM token reduction** on realistic prompts (100+ tokens)
-- **High-quality translation** - Uses Meta's NLLB neural machine translation
-- **Concise output** - NLLB produces compact, efficient translations
-- **Perfect formatting** - Preserves code blocks, markdown, etc.
-- **Free & Offline** - Local processing, no API keys needed
+- ~65% LLM token reduction on realistic prompts (100+ tokens)
+- High-quality translation using Meta's NLLB neural machine translation
+- Preserves code blocks, markdown, and formatting
+- Free and offline - local processing, no API keys needed
 
 ## Performance Metrics
 
-The optimizer provides transparent metrics for each request:
+The optimizer provides metrics for each request:
 
-- **LLM Token Reduction**: Measures tokens saved on the LLM side (~65% for prompts ≥100 tokens)
+- **LLM Token Reduction**: Tokens saved on the LLM side (~65% for prompts ≥100 tokens)
 - **Translation Time**: Time spent on JA→EN translation (typically 1-3s)
-- **Time Overhead %**: Translation time as percentage of total request time
-- **Cost Savings**: Estimated cost reduction (important for paid APIs like GPT-4, Claude)
+- **Time Overhead**: Translation time as percentage of total request time
+- **Cost Savings**: Estimated cost reduction for paid APIs (GPT-4, Claude, etc.)
 
-**Note**: Translation uses NLLB's internal tokenization (different from LLM tokens), so we track translation impact via time rather than token counts.
+Note: Translation uses NLLB's internal tokenization (different from LLM tokens), so we track translation impact via time rather than token counts.
 
 ## When To Use
 
-**✅ Best for:**
+Best for:
 
 - Long technical queries (>100 tokens)
 - Code examples and documentation
 - Detailed explanations
-- Situations where quality matters
 
-**❌ Not ideal for:**
+Not ideal for:
 
 - Very short prompts (<50 tokens) - English may be longer than Japanese
 - Real-time chat - Translation adds latency (~1s)
