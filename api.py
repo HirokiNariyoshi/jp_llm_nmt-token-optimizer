@@ -1,5 +1,5 @@
 """
-FastAPI server for TokenOptimizer - REST API for LLM token optimization.
+FastAPI server for TokenOptimizer.
 """
 
 from fastapi import FastAPI, HTTPException
@@ -10,18 +10,15 @@ import logging
 
 from token_optimizer import TokenOptimizer
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI app
 app = FastAPI(
     title="TokenOptimizer API",
     description="Optimize Japanese LLM queries by reducing token usage through neural machine translation",
     version="0.1.0"
 )
 
-# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,7 +27,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize optimizer (lazy loading of NLLB model)
 optimizer: Optional[TokenOptimizer] = None
 
 
@@ -47,7 +43,6 @@ def get_optimizer() -> TokenOptimizer:
     return optimizer
 
 
-# Request/Response models
 class OptimizeRequest(BaseModel):
     """Request model for optimization endpoint."""
     prompt: str = Field(..., description="Japanese prompt text to optimize")
@@ -113,14 +108,9 @@ async def root():
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
-    """
-    Health check endpoint.
-    
-    Verifies that the API and its dependencies are operational.
-    """
+    """Health check endpoint."""
     optimizer_ready = optimizer is not None
     
-    # Check Ollama connection
     ollama_connected = False
     try:
         import requests
@@ -140,18 +130,7 @@ async def health_check():
 
 @app.post("/optimize", response_model=OptimizeResponse)
 async def optimize_query(request: OptimizeRequest):
-    """
-    Optimize a Japanese query for LLM processing.
-    
-    Translates Japanese prompts to English to reduce token usage,
-    while maintaining Japanese output quality.
-    
-    Returns:
-        OptimizeResponse with Japanese content and optimization metrics
-    
-    Raises:
-        HTTPException: If optimization fails
-    """
+    """Optimize a Japanese query for LLM processing."""
     try:
         opt = get_optimizer()
         
@@ -182,15 +161,13 @@ async def optimize_query(request: OptimizeRequest):
         )
 
 
-# Startup event
 @app.on_event("startup")
 async def startup_event():
     """Run on application startup."""
     logger.info("TokenOptimizer API starting up...")
-    logger.info("Optimizer will be initialized on first request (lazy loading)")
+    logger.info("Optimizer will be initialized on first request")
 
 
-# Shutdown event
 @app.on_event("shutdown")
 async def shutdown_event():
     """Run on application shutdown."""
