@@ -1,5 +1,9 @@
 # Japanese LLM Token Optimizer
 
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 Reduce LLM token usage for Japanese queries by **~65%** on realistic prompts (100+ tokens) while maintaining high quality output.
 
 Available as both a **Python library** and **REST API** for easy integration.
@@ -173,18 +177,35 @@ The optimizer provides metrics for each request:
 
 Note: Translation uses NLLB's internal tokenization (different from LLM tokens), so we track translation impact via time rather than token counts.
 
+📊 **See detailed performance analysis and cost comparisons in [BENCHMARKS.md](BENCHMARKS.md)**
+
 ## When To Use
 
 Best for:
-
 - Long technical queries (>100 tokens)
 - Code examples and documentation
 - Detailed explanations
 
 Not ideal for:
-
 - Very short prompts (<50 tokens) - English may be longer than Japanese
 - Real-time chat - Translation adds latency (~1s)
+
+## Use Cases
+
+### 1. API Cost Reduction
+Reduce token costs for paid APIs like GPT-4 or Claude by 65%. For a company processing 1M Japanese tokens/day:
+- **Before**: $30/day (GPT-4 pricing)
+- **After**: $10.50/day
+- **Annual savings**: $7,115
+
+### 2. Japanese Documentation Chatbot
+Build customer support chatbots that handle Japanese queries efficiently while using English-optimized models.
+
+### 3. Code Generation for Japanese Developers
+Generate code from Japanese descriptions with 65% fewer input tokens, making it practical for large codebases.
+
+### 4. Content Localization
+Process Japanese content for analysis, summarization, or transformation using models optimized for English.
 
 ## Configuration
 
@@ -269,6 +290,27 @@ llm_nmt-token-optimizer/
 - NLLB processes on CPU (can be slow on older hardware)
 - Typical translation time: 1-5s depending on text length
 - Progress isn't shown during translation
+
+## Testing
+
+Run the test suite:
+
+```bash
+pip install pytest pytest-cov
+pytest tests/
+```
+
+See [tests/README.md](tests/README.md) for more details.
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+Key areas for contribution:
+- Additional translation model support
+- Performance optimizations
+- Extended test coverage
+- Documentation improvements
 
 ## License
 
