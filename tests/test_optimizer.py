@@ -3,6 +3,7 @@ Tests for TokenOptimizer core functionality.
 """
 
 import pytest
+
 from token_optimizer import TokenOptimizer
 from token_optimizer.models import OptimizationResponse
 

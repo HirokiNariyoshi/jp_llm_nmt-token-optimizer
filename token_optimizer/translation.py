@@ -26,7 +26,7 @@ class NLLBTranslator:
             return
 
         try:
-            from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+            from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
             print(f"Loading NLLB model ({self.model_name})...")
             print("This may take a minute on first run (downloading ~600MB)...")

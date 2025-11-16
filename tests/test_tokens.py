@@ -3,6 +3,7 @@ Tests for token counting functionality.
 """
 
 import pytest
+
 from token_optimizer.tokens import TokenCounter
 
 

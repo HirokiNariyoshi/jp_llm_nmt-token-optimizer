@@ -2,11 +2,12 @@
 FastAPI server for TokenOptimizer.
 """
 
+import logging
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import Optional
-import logging
 
 from token_optimizer import TokenOptimizer
 

@@ -6,9 +6,9 @@ import time
 from typing import Optional
 
 from .llm import LLMService
-from .translation import TranslationService
+from .models import OptimizationMetrics, OptimizationResponse
 from .tokens import TokenCounter
-from .models import OptimizationResponse, OptimizationMetrics
+from .translation import TranslationService
 
 
 class TokenOptimizer:

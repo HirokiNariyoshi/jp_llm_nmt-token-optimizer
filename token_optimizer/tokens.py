@@ -2,8 +2,9 @@
 Token counting utilities for Ollama models.
 """
 
-import tiktoken
 from typing import Optional
+
+import tiktoken
 
 
 class TokenCounter:
