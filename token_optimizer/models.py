@@ -10,6 +10,7 @@ from datetime import datetime
 @dataclass
 class OptimizationMetrics:
     """Metrics for optimization performance."""
+
     original_tokens: int
     optimized_tokens: int
     tokens_saved: int
@@ -20,21 +21,21 @@ class OptimizationMetrics:
     llm_time: float
     total_time: float
     used_optimization: bool
-    
+
     @property
     def token_reduction_percent(self) -> float:
         """Calculate percentage of LLM tokens saved."""
         if self.original_tokens == 0:
             return 0.0
         return (self.tokens_saved / self.original_tokens) * 100
-    
+
     @property
     def cost_reduction_percent(self) -> float:
         """Calculate percentage of cost saved."""
         if self.original_cost == 0:
             return 0.0
         return (self.cost_saved / self.original_cost) * 100
-    
+
     @property
     def time_overhead_percent(self) -> float:
         """Calculate translation time as percentage of total time."""
@@ -46,15 +47,16 @@ class OptimizationMetrics:
 @dataclass
 class OptimizationResponse:
     """Response from optimized LLM request."""
+
     content: str
     metrics: OptimizationMetrics
     raw_response: Optional[Dict[str, Any]] = None
     timestamp: datetime = None
-    
+
     def __post_init__(self):
         if self.timestamp is None:
             self.timestamp = datetime.now()
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert response to dictionary."""
         return {
@@ -72,15 +74,16 @@ class OptimizationResponse:
                 "time_overhead_percent": self.metrics.time_overhead_percent,
                 "llm_time": self.metrics.llm_time,
                 "total_time": self.metrics.total_time,
-                "used_optimization": self.metrics.used_optimization
+                "used_optimization": self.metrics.used_optimization,
             },
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp.isoformat(),
         }
 
 
 @dataclass
 class TranslationResult:
     """Result from translation operation."""
+
     text: str
     source_lang: str
     target_lang: str

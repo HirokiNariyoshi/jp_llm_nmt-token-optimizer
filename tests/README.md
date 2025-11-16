@@ -5,21 +5,25 @@ This directory contains the test suite for the Token Optimizer.
 ## Running Tests
 
 Install test dependencies:
+
 ```bash
 pip install pytest pytest-cov
 ```
 
 Run all tests:
+
 ```bash
 pytest
 ```
 
 Run with coverage:
+
 ```bash
 pytest --cov=token_optimizer tests/
 ```
 
 Run specific test file:
+
 ```bash
 pytest tests/test_optimizer.py
 ```
@@ -32,6 +36,7 @@ pytest tests/test_optimizer.py
 ## Requirements
 
 Tests require:
+
 - Ollama running locally with llama3.2:3b model
 - NLLB model downloaded (first test run will download it)
 

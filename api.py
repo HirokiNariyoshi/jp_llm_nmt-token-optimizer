@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="TokenOptimizer API",
     description="Optimize Japanese LLM queries by reducing token usage through neural machine translation",
-    version="0.1.0"
+    version="0.1.0",
 )
 
 app.add_middleware(
@@ -35,33 +35,38 @@ def get_optimizer() -> TokenOptimizer:
     global optimizer
     if optimizer is None:
         logger.info("Initializing TokenOptimizer...")
-        optimizer = TokenOptimizer(
-            llm_model="llama3.2:3b",
-            optimization_threshold=50
-        )
+        optimizer = TokenOptimizer(llm_model="llama3.2:3b", optimization_threshold=50)
         logger.info("TokenOptimizer initialized successfully")
     return optimizer
 
 
 class OptimizeRequest(BaseModel):
     """Request model for optimization endpoint."""
+
     prompt: str = Field(..., description="Japanese prompt text to optimize")
-    max_tokens: int = Field(1000, description="Maximum tokens for LLM response", ge=1, le=4000)
-    system_prompt: Optional[str] = Field(None, description="Optional Japanese system prompt")
-    force_optimization: Optional[bool] = Field(None, description="Force enable/disable optimization (None=auto)")
+    max_tokens: int = Field(
+        1000, description="Maximum tokens for LLM response", ge=1, le=4000
+    )
+    system_prompt: Optional[str] = Field(
+        None, description="Optional Japanese system prompt"
+    )
+    force_optimization: Optional[bool] = Field(
+        None, description="Force enable/disable optimization (None=auto)"
+    )
 
     class Config:
         schema_extra = {
             "example": {
                 "prompt": "Pythonで機械学習モデルを作る方法を教えてください。",
                 "max_tokens": 500,
-                "force_optimization": True
+                "force_optimization": True,
             }
         }
 
 
 class MetricsResponse(BaseModel):
     """Metrics from optimization process."""
+
     original_tokens: int
     optimized_tokens: int
     tokens_saved: int
@@ -79,12 +84,16 @@ class MetricsResponse(BaseModel):
 
 class OptimizeResponse(BaseModel):
     """Response model for optimization endpoint."""
+
     content: str = Field(..., description="LLM generated content in Japanese")
-    metrics: MetricsResponse = Field(..., description="Performance and optimization metrics")
+    metrics: MetricsResponse = Field(
+        ..., description="Performance and optimization metrics"
+    )
 
 
 class HealthResponse(BaseModel):
     """Health check response."""
+
     status: str
     optimizer_ready: bool
     ollama_connected: bool
@@ -101,8 +110,8 @@ async def root():
         "endpoints": {
             "POST /optimize": "Optimize a Japanese query",
             "GET /health": "Health check",
-            "GET /docs": "Interactive API documentation"
-        }
+            "GET /docs": "Interactive API documentation",
+        },
     }
 
 
@@ -110,21 +119,22 @@ async def root():
 async def health_check():
     """Health check endpoint."""
     optimizer_ready = optimizer is not None
-    
+
     ollama_connected = False
     try:
         import requests
+
         response = requests.get("http://localhost:11434/api/tags", timeout=2)
         ollama_connected = response.status_code == 200
     except Exception:
         pass
-    
+
     status = "healthy" if ollama_connected else "degraded"
-    
+
     return {
         "status": status,
         "optimizer_ready": optimizer_ready,
-        "ollama_connected": ollama_connected
+        "ollama_connected": ollama_connected,
     }
 
 
@@ -133,32 +143,29 @@ async def optimize_query(request: OptimizeRequest):
     """Optimize a Japanese query for LLM processing."""
     try:
         opt = get_optimizer()
-        
+
         logger.info(f"Processing optimization request: {len(request.prompt)} chars")
-        
+
         response = opt.optimize_request(
             prompt=request.prompt,
             max_tokens=request.max_tokens,
             system_prompt=request.system_prompt,
-            force_optimization=request.force_optimization
+            force_optimization=request.force_optimization,
         )
-        
+
         logger.info(
             f"Optimization complete: {response.metrics.token_reduction_percent:.1f}% "
             f"token reduction, {response.metrics.total_time:.2f}s total time"
         )
-        
+
         return OptimizeResponse(
             content=response.content,
-            metrics=MetricsResponse(**response.to_dict()["metrics"])
+            metrics=MetricsResponse(**response.to_dict()["metrics"]),
         )
-        
+
     except Exception as e:
         logger.error(f"Optimization failed: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Optimization failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Optimization failed: {str(e)}")
 
 
 @app.on_event("startup")
@@ -176,4 +183,5 @@ async def shutdown_event():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

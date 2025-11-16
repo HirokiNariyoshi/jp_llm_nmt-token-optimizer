@@ -182,29 +182,36 @@ See detailed performance analysis in [BENCHMARKS.md](BENCHMARKS.md)
 ## When To Use
 
 Best for:
+
 - Long technical queries (>100 tokens)
 - Code examples and documentation
 - Detailed explanations
 
 Not ideal for:
+
 - Very short prompts (<50 tokens) - English may be longer than Japanese
 - Real-time chat - Translation adds latency (~1s)
 
 ## Use Cases
 
 ### API Cost Reduction
+
 Reduce token costs for paid APIs by 65%. Example with 1M Japanese tokens/day on GPT-4:
+
 - Before: $30/day
-- After: $10.50/day  
+- After: $10.50/day
 - Annual savings: $7,115
 
 ### Japanese Documentation Chatbot
+
 Handle Japanese queries efficiently while using English-optimized models.
 
 ### Code Generation
+
 Generate code from Japanese descriptions with fewer input tokens.
 
 ### Content Processing
+
 Process Japanese content for analysis or summarization.
 
 ## Configuration
@@ -305,6 +312,7 @@ See [tests/README.md](tests/README.md) for more details.
 ## Project Goals
 
 This is a personal project exploring:
+
 - Cost optimization techniques for LLM applications
 - Neural machine translation for production use cases
 - Practical DevOps with Docker and REST APIs

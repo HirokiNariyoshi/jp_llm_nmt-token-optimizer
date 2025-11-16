@@ -18,12 +18,12 @@ Test results across differe- Date: November 2025
 
 ## Token Reduction
 
-| Prompt Size | Original Tokens | Optimized Tokens | Reduction | Translation Time | Total Time |
-|-------------|----------------|------------------|-----------|------------------|------------|
-| Short (50 tokens) | 53 | 48 | 9.4% | 1.2s | 8.5s |
-| Medium (100 tokens) | 105 | 42 | 60.0% | 1.8s | 10.2s |
-| Long (200 tokens) | 212 | 78 | 63.2% | 2.5s | 12.8s |
-| Very Long (500 tokens) | 534 | 186 | 65.2% | 4.1s | 18.3s |
+| Prompt Size            | Original Tokens | Optimized Tokens | Reduction | Translation Time | Total Time |
+| ---------------------- | --------------- | ---------------- | --------- | ---------------- | ---------- |
+| Short (50 tokens)      | 53              | 48               | 9.4%      | 1.2s             | 8.5s       |
+| Medium (100 tokens)    | 105             | 42               | 60.0%     | 1.8s             | 10.2s      |
+| Long (200 tokens)      | 212             | 78               | 63.2%     | 2.5s             | 12.8s      |
+| Very Long (500 tokens) | 534             | 186              | 65.2%     | 4.1s             | 18.3s      |
 
 ## Observations
 
@@ -36,27 +36,28 @@ Test results across differe- Date: November 2025
 Based on GPT-4 pricing ($0.03/1K input tokens):
 
 | Monthly Volume | Without Optimizer | With Optimizer | Monthly Savings |
-|----------------|-------------------|----------------|-----------------|
-| 1M tokens | $30 | $10.50 | $19.50 |
-| 10M tokens | $300 | $105 | $195 |
-| 100M tokens | $3,000 | $1,050 | $1,950 |
+| -------------- | ----------------- | -------------- | --------------- |
+| 1M tokens      | $30               | $10.50         | $19.50          |
+| 10M tokens     | $300              | $105           | $195            |
+| 100M tokens    | $3,000            | $1,050         | $1,950          |
 
 ## Comparison
 
-| Approach | Token Reduction | Translation Quality | Setup Complexity | Cost |
-|----------|----------------|---------------------|------------------|------|
-| **This Optimizer** | ~65% | High (NLLB) | Low | Free |
-| Direct Japanese | 0% | Native | None | Baseline |
-| Basic MT (Google Translate API) | ~60% | Medium | Low | $20/1M chars |
-| GPT-4 Translation | ~65% | Highest | Medium | $30/1M tokens |
+| Approach                        | Token Reduction | Translation Quality | Setup Complexity | Cost          |
+| ------------------------------- | --------------- | ------------------- | ---------------- | ------------- |
+| **This Optimizer**              | ~65%            | High (NLLB)         | Low              | Free          |
+| Direct Japanese                 | 0%              | Native              | None             | Baseline      |
+| Basic MT (Google Translate API) | ~60%            | Medium              | Low              | $20/1M chars  |
+| GPT-4 Translation               | ~65%            | Highest             | Medium           | $30/1M tokens |
 
 ## Example
 
-Prompt: "Pythonで機械学習モデルを作成し、scikit-learnを使ってランダムフォレスト分類器を実装する方法を、サンプルコード付きで詳しく説明してください。"
+Prompt: "Python で機械学習モデルを作成し、scikit-learn を使ってランダムフォレスト分類器を実装する方法を、サンプルコード付きで詳しく説明してください。"
 
 Results:
+
 - Original: 86 tokens
-- Optimized: 39 tokens  
+- Optimized: 39 tokens
 - Reduction: 54.7%
 - Translation time: 3.2s
 - Total time: 12.7s
