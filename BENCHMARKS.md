@@ -1,10 +1,22 @@
 # Performance Benchmarks
 
-## Token Reduction Analysis
+Test results across differe- Date: November 2025
 
-Benchmark results across different prompt sizes using Llama 3.2 3B model.
+## Methodology
 
-### Test Results
+- Test prompts from real-world Japanese technical queries
+- Each prompt tested 3 times, median values reported
+- Token counting using tiktoken (cl100k_base)
+- Translation time measured separately from LLM inference
+
+## Limitations
+
+- Results vary with different LLM models
+- Translation quality depends on domain
+- Not suitable for very short prompts (<50 tokens)
+- Adds latency (not suitable for real-time streaming)using Llama 3.2 3B.
+
+## Token Reduction
 
 | Prompt Size | Original Tokens | Optimized Tokens | Reduction | Translation Time | Total Time |
 |-------------|----------------|------------------|-----------|------------------|------------|
@@ -13,25 +25,23 @@ Benchmark results across different prompt sizes using Llama 3.2 3B model.
 | Long (200 tokens) | 212 | 78 | 63.2% | 2.5s | 12.8s |
 | Very Long (500 tokens) | 534 | 186 | 65.2% | 4.1s | 18.3s |
 
-### Key Findings
+## Observations
 
-1. **Optimal Range**: Best results with prompts >100 tokens (60-65% reduction)
-2. **Translation Overhead**: Typically 15-25% of total request time
-3. **Break-even Point**: ~50 tokens (below this, English may be longer than Japanese)
-4. **Consistency**: Token reduction remains stable at ~65% for prompts >200 tokens
+1. Best results with prompts >100 tokens (60-65% reduction)
+2. Translation overhead typically 15-25% of total request time
+3. Token reduction plateaus at ~65% for longer prompts
 
-## Cost Savings Analysis
+## Cost Projections
 
 Based on GPT-4 pricing ($0.03/1K input tokens):
 
-| Monthly Volume | Without Optimizer | With Optimizer | Monthly Savings | Annual Savings |
-|----------------|-------------------|----------------|-----------------|----------------|
-| 1M tokens | $30 | $10.50 | $19.50 | $234 |
-| 10M tokens | $300 | $105 | $195 | $2,340 |
-| 100M tokens | $3,000 | $1,050 | $1,950 | $23,400 |
-| 1B tokens | $30,000 | $10,500 | $19,500 | $234,000 |
+| Monthly Volume | Without Optimizer | With Optimizer | Monthly Savings |
+|----------------|-------------------|----------------|-----------------|
+| 1M tokens | $30 | $10.50 | $19.50 |
+| 10M tokens | $300 | $105 | $195 |
+| 100M tokens | $3,000 | $1,050 | $1,950 |
 
-## Comparison with Alternatives
+## Comparison
 
 | Approach | Token Reduction | Translation Quality | Setup Complexity | Cost |
 |----------|----------------|---------------------|------------------|------|
@@ -40,17 +50,16 @@ Based on GPT-4 pricing ($0.03/1K input tokens):
 | Basic MT (Google Translate API) | ~60% | Medium | Low | $20/1M chars |
 | GPT-4 Translation | ~65% | Highest | Medium | $30/1M tokens |
 
-## Real-World Example
+## Example
 
-**Prompt**: "Pythonで機械学習モデルを作成し、scikit-learnを使ってランダムフォレスト分類器を実装する方法を、サンプルコード付きで詳しく説明してください。"
+Prompt: "Pythonで機械学習モデルを作成し、scikit-learnを使ってランダムフォレスト分類器を実装する方法を、サンプルコード付きで詳しく説明してください。"
 
-**Results**:
-- Original (Japanese): 86 tokens
-- Optimized (English): 39 tokens
+Results:
+- Original: 86 tokens
+- Optimized: 39 tokens  
 - Reduction: 54.7%
 - Translation time: 3.2s
 - Total time: 12.7s
-- Cost savings: 54.7% on GPT-4 API calls
 
 ## Test Environment
 

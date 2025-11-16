@@ -4,19 +4,19 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Reduce LLM token usage for Japanese queries by **~65%** on realistic prompts (100+ tokens) while maintaining high quality output.
+A tool to reduce LLM token usage for Japanese queries by ~65% through neural machine translation.
 
-Available as both a **Python library** and **REST API** for easy integration.
+Available as both a Python library and REST API.
 
 ## How It Works
 
-Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This library:
+Japanese text uses 3-5x more tokens than English in most LLM tokenizers. This tool:
 
-1. Translates Japanese prompts → English using **Meta's NLLB** neural machine translation
-2. Instructs the LLM to respond in Japanese natively (avoids back-translation)
-3. Returns high-quality Japanese output directly
+1. Translates Japanese prompts → English using Meta's NLLB neural machine translation
+2. Instructs the LLM to respond in Japanese natively
+3. Returns Japanese output directly
 
-**Result:** **~65% LLM token reduction** on prompts ≥100 tokens
+Result: ~65% token reduction on prompts ≥100 tokens
 
 ## Installation
 
@@ -177,7 +177,7 @@ The optimizer provides metrics for each request:
 
 Note: Translation uses NLLB's internal tokenization (different from LLM tokens), so we track translation impact via time rather than token counts.
 
-📊 **See detailed performance analysis and cost comparisons in [BENCHMARKS.md](BENCHMARKS.md)**
+See detailed performance analysis in [BENCHMARKS.md](BENCHMARKS.md)
 
 ## When To Use
 
@@ -192,20 +192,20 @@ Not ideal for:
 
 ## Use Cases
 
-### 1. API Cost Reduction
-Reduce token costs for paid APIs like GPT-4 or Claude by 65%. For a company processing 1M Japanese tokens/day:
-- **Before**: $30/day (GPT-4 pricing)
-- **After**: $10.50/day
-- **Annual savings**: $7,115
+### API Cost Reduction
+Reduce token costs for paid APIs by 65%. Example with 1M Japanese tokens/day on GPT-4:
+- Before: $30/day
+- After: $10.50/day  
+- Annual savings: $7,115
 
-### 2. Japanese Documentation Chatbot
-Build customer support chatbots that handle Japanese queries efficiently while using English-optimized models.
+### Japanese Documentation Chatbot
+Handle Japanese queries efficiently while using English-optimized models.
 
-### 3. Code Generation for Japanese Developers
-Generate code from Japanese descriptions with 65% fewer input tokens, making it practical for large codebases.
+### Code Generation
+Generate code from Japanese descriptions with fewer input tokens.
 
-### 4. Content Localization
-Process Japanese content for analysis, summarization, or transformation using models optimized for English.
+### Content Processing
+Process Japanese content for analysis or summarization.
 
 ## Configuration
 
@@ -302,15 +302,13 @@ pytest tests/
 
 See [tests/README.md](tests/README.md) for more details.
 
-## Contributing
+## Project Goals
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-Key areas for contribution:
-- Additional translation model support
-- Performance optimizations
-- Extended test coverage
-- Documentation improvements
+This is a personal project exploring:
+- Cost optimization techniques for LLM applications
+- Neural machine translation for production use cases
+- Practical DevOps with Docker and REST APIs
+- Testing and benchmarking best practices
 
 ## License
 
