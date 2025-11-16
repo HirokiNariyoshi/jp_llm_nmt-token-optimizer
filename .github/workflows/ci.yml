@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v3
@@ -51,12 +51,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
           pip install pytest pytest-cov
+          pip install tiktoken>=0.5.0 requests>=2.31.0
 
       - name: Run unit tests
         run: |
-          pytest tests/test_tokens.py -v
+          pytest tests/test_tokens.py -v --tb=short
         # Note: test_optimizer.py requires Ollama which isn't available in CI
         # In a production environment, you'd mock these dependencies
 
