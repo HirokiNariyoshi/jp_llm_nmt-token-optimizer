@@ -4,9 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A tool to reduce LLM token usage for Japanese queries by ~65% through neural machine translation.
+A small experiment in reducing LLM token costs for Japanese text. Translates Japanese prompts to English before sending them to the LLM, which can save around 65% on tokens.
 
-Available as both a Python library and REST API.
+Built this to learn more about neural machine translation and LLM optimization.
 
 ## How It Works
 
@@ -159,12 +159,12 @@ print(response.content)  # Japanese output
 print(f"Tokens saved: {response.metrics.tokens_saved}")
 ```
 
-## Features
+## What It Does
 
-- ~65% LLM token reduction on realistic prompts (100+ tokens)
-- High-quality translation using Meta's NLLB neural machine translation
-- Preserves code blocks, markdown, and formatting
-- Free and offline - local processing, no API keys needed
+- Reduces token usage by around 65% for longer Japanese prompts (100+ tokens)
+- Uses Meta's NLLB for translation (surprisingly good quality)
+- Keeps code blocks and formatting intact
+- Runs locally - no API keys or external services needed
 
 ## Performance Metrics
 
@@ -179,18 +179,18 @@ Note: Translation uses NLLB's internal tokenization (different from LLM tokens),
 
 See detailed performance analysis in [BENCHMARKS.md](BENCHMARKS.md)
 
-## When To Use
+## When This Might Help
 
-Best for:
+Works well for:
 
-- Long technical queries (>100 tokens)
-- Code examples and documentation
-- Detailed explanations
+- Longer technical questions (100+ tokens)
+- Generating code from Japanese descriptions
+- Processing documentation
 
-Not ideal for:
+Probably not worth it for:
 
-- Very short prompts (<50 tokens) - English may be longer than Japanese
-- Real-time chat - Translation adds latency (~1s)
+- Short prompts (English can end up longer than Japanese)
+- Real-time chat (translation adds a second or two)
 
 ## Use Cases
 
@@ -309,14 +309,16 @@ pytest tests/
 
 See [tests/README.md](tests/README.md) for more details.
 
-## Project Goals
+## Why I Built This
 
-This is a personal project exploring:
+Started this project to explore:
 
-- Cost optimization techniques for LLM applications
-- Neural machine translation for production use cases
-- Practical DevOps with Docker and REST APIs
-- Testing and benchmarking best practices
+- Ways to reduce LLM costs when working with Japanese text
+- How well neural machine translation actually works in practice
+- Building a simple REST API with Docker
+- Getting comfortable with testing and CI/CD workflows
+
+It's been a good learning experience. The token savings are real, though the translation step does add latency.
 
 ## License
 
